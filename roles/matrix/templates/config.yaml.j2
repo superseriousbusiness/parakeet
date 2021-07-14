@@ -26,7 +26,7 @@
 # lowercase and may contain an explicit port.
 # Examples: matrix.org, localhost:8080
 #
-server_name: "{{ top_level_domain }}"
+server_name: "{{ domain }}"
 
 # When running as a daemon, the file to store the pid in
 #
@@ -736,7 +736,7 @@ database:
 # A yaml python logging config file as described by
 # https://docs.python.org/3.7/library/logging.config.html#configuration-dictionary-schema
 #
-log_config: "/data/{{ top_level_domain }}.log.config"
+log_config: "/data/{{ domain }}.log.config"
 
 
 ## Ratelimiting ##
@@ -1245,7 +1245,7 @@ account_threepid_delegates:
 # homeserver. This behaviour can be customised with the settings below.
 #
 auto_join_rooms:
-  - "#general:{{ top_level_domain }}"
+  - "#general:{{ domain }}"
 
 # Where auto_join_rooms are specified, setting this flag ensures that the
 # the rooms exist by creating them when the first user on the
@@ -1391,7 +1391,7 @@ form_secret: "{{ synapse_form_secret }}"
 
 # Path to the signing key to sign messages with
 #
-signing_key_path: "/data/{{ top_level_domain }}.signing.key"
+signing_key_path: "/data/{{ domain }}.signing.key"
 
 # The keys that the server used to sign messages with but won't use
 # to sign new messages.

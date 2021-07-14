@@ -10,7 +10,7 @@
 - name: "template openldap ldif file"
   template:
     src: "initial.ldif.j2"
-    dest: "{{ custom_ldif_location }}"
+    dest: "{{ initial_ldif_location }}"
     owner: "{{ user_group.openldapconfig.uid }}"
     group: "{{ user_group.openldapconfig.gid }}"
     mode: "600"
@@ -21,7 +21,7 @@
     image: "osixia/openldap:{{ app_versions.openldap }}"
     env:
       LDAP_ORGANISATION: "{{ organization }}"
-      LDAP_DOMAIN: "{{ top_level_domain }}"
+      LDAP_DOMAIN: "{{ domain }}"
       LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
       LDAP_TLS: "false"
       LDAP_READONLY_USER: "true"
@@ -36,6 +36,26 @@
     volumes:
       - "{{ docker_volumes.openldapdata }}:/var/lib/ldap"
       - "{{ docker_volumes.openldapconfig }}:/etc/ldap/slapd.d"
-      # - "{{ custom_ldif_location }}:/container/service/slapd/assets/config/bootstrap/ldif/custom/initial.ldif"
+      - "{{ initial_ldif_location }}:/ldif/initial.ldif"
     networks_cli_compatible: no
     container_default_behavior: compatibility
+
+- name: "wait for ldap to come up + become searchable"
+  shell:
+    cmd: "docker exec openldap 'ldapsearch' '-x' '-H' 'ldap://localhost' '-b' '{{ ldap_base_dn }}' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}'"
+  register: ldap_search_output
+  until: ldap_search_output.rc == 0
+  changed_when: false
+  ignore_errors: yes
+  retries: 10
+  delay: 5
+
+- name: "init ldap"
+  shell:
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/initial.ldif'"
+  register: ldap_add_output
+  until: "ldap_add_output.rc == 68"
+  failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
+  changed_when: "ldap_add_output.rc == 0"
+  retries: 10
+  delay: 5

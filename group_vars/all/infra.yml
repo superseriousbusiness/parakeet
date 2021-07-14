@@ -1,8 +1,9 @@
 ---
 
 organization: "superseriousbusiness"
-top_level_domain: "{{ organization }}.org"
-admin_email_address: "admin@{{ top_level_domain }}"
+top_level_domain: "org"
+domain: "{{ organization }}.{{ top_level_domain }}"
+admin_email_address: "admin@{{ domain }}"
 top_level_dir: "/opt/parakeet"
 
 default_user: 'parakeet'
