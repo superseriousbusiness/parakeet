@@ -1,0 +1,9 @@
+---
+
+  # some containers have to be reachable from all docker networks on a machine,
+  # so we can do some trickery here to create a docker_container compatible
+  # list of all of them.
+- name: parse networks
+  set_fact:
+    all_docker_networks: "{{ all_docker_networks | default([]) + [{ 'name' : item.value }] }}"
+  loop: "{{ docker_network_names | dict2items }}"

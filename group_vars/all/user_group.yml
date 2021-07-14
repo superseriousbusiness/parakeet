@@ -1,0 +1,36 @@
+---
+
+# used to correctly chown volumes/data and to
+# perform operations within running docker containers
+
+user_group:
+    nginx:
+      uid: "101"
+      gid: "101"
+    openldapconfig:
+      uid: "991"
+      gid: "991"
+    openldapdata:
+      uid: "991"
+      gid: "991"
+    peertube_data:
+      uid: "999"
+      gid: "999"
+    peertube_config:
+      uid: "999"
+      gid: "999"
+    postgresbackup:
+      uid: "70"
+      gid: "70"
+    postgresdata:
+      uid: "70"
+      gid: "70"
+    synapse:
+      uid: "991"
+      gid: "991"
+    traefikconfig:
+      uid: "0"
+      gid: "0"
+    parakeet:
+      uid: "1001"
+      gid: "1001"

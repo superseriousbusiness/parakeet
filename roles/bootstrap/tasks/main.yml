@@ -1,0 +1,21 @@
+---
+- name: "task | apt"
+  import_tasks: apt.yml
+
+- name: "task | pip"
+  import_tasks: pip.yml
+
+- name: "task | create users"
+  import_tasks: users.yml
+
+- name: "task | create directory structure"
+  import_tasks: dirs.yml
+
+- name: "task | perform ufw tasks"
+  import_tasks: ufw.yml
+
+- name: "task | create docker networks"
+  import_tasks: networks.yml
+
+- name: "task | create docker volumes"
+  import_tasks: volumes.yml

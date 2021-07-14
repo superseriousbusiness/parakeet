@@ -1,0 +1,41 @@
+---
+
+- name: "create openldap dir"
+  file:
+    path: "{{ openldap_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template openldap ldif file"
+  template:
+    src: "initial.ldif.j2"
+    dest: "{{ custom_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+
+- name: "deploy openldap"
+  docker_container:
+    name: "openldap"
+    image: "osixia/openldap:{{ app_versions.openldap }}"
+    env:
+      LDAP_ORGANISATION: "{{ organization }}"
+      LDAP_DOMAIN: "{{ top_level_domain }}"
+      LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
+      LDAP_TLS: "false"
+      LDAP_READONLY_USER: "true"
+      LDAP_READONLY_USER_USERNAME: "{{ ldap_readonly_user }}"
+      LDAP_READONLY_USER_PASSWORD: "{{ ldap_readonly_password }}"
+      LDAP_OPENLDAP_UID: "{{ user_group.openldapconfig.uid }}"
+      LDAP_OPENLDAP_GID: "{{ user_group.openldapconfig.gid }}"
+    networks: "{{ all_docker_networks }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.openldapdata }}:/var/lib/ldap"
+      - "{{ docker_volumes.openldapconfig }}:/etc/ldap/slapd.d"
+      # - "{{ custom_ldif_location }}:/container/service/slapd/assets/config/bootstrap/ldif/custom/initial.ldif"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility

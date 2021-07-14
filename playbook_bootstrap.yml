@@ -1,0 +1,9 @@
+---
+
+- name: "bootstrap"
+  hosts: all
+  become: true
+  tasks:
+    - name: "task | bootstrap"
+      include_role:
+        name: bootstrap

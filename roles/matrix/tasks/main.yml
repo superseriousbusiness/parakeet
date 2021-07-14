@@ -1,0 +1,13 @@
+---
+
+- name: "synapse"
+  import_tasks: synapse.yml
+
+- name: "element"
+  import_tasks: element.yml
+
+- name: "nginx"
+  import_tasks: nginx.yml
+
+- name: "sync accounts"
+  import_tasks: syncaccounts.yml

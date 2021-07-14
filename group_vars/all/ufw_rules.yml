@@ -1,0 +1,11 @@
+---
+
+ufw_rules:
+# allow 80
+  - rule: allow
+    port: '80'
+    proto: tcp
+# allow 443
+  - rule: allow
+    port: '443'
+    proto: tcp

@@ -1,0 +1,11 @@
+---
+
+- name: "set up postgres"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | postgres"
+      include_role:
+        name: postgres

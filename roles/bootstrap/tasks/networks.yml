@@ -1,0 +1,6 @@
+---
+
+- name: "create docker networks"
+  docker_network:
+    name: "{{ item.value }}"
+  loop: "{{ docker_network_names | dict2items }}"

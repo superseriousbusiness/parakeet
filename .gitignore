@@ -1,0 +1,3 @@
+vaultpassword
+hosts.yml
+group_vars/all/secrets.yml

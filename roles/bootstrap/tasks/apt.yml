@@ -1,0 +1,64 @@
+---
+
+- name: Update repositories cache and upgrade packages
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Ensure ufw is installed
+  apt:
+    name: "ufw"
+    state: latest
+
+- name: Ensure fail2ban is installed
+  apt:
+    name: "fail2ban"
+    state: latest
+
+- name: Ensure pip3 is installed
+  apt:
+    name: "python3-pip"
+    state: latest
+
+- name: Install dependencies for docker
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+
+- name: Install Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: extract lsb_release
+  shell:
+    cmd: "lsb_release -cs"
+  register: lsb_release_output
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu {{ lsb_release_output.stdout }} stable"
+    state: present
+
+- name: Install Docker
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io 
+
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes

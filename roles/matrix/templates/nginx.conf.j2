@@ -1,0 +1,16 @@
+events {}
+http {
+    server {
+        listen 80;
+        listen [::]:80;
+        server_name {{ top_level_domain }};
+
+        location /.well-known/matrix/server {
+            return 200 '{"m.server": "{{ synapse_hostname }}"}';
+        }
+
+        location /_matrix/static {
+            rewrite ^.*$ https://{{ element_hostname }}? permanent;
+        }
+    }
+}

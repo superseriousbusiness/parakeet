@@ -1,0 +1,39 @@
+name: ansible
+channels:
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - ca-certificates=2020.10.14=0
+  - certifi=2020.6.20=py38h06a4308_2
+  - ld_impl_linux-64=2.33.1=h53a641e_7
+  - libedit=3.1.20191231=h14c3975_1
+  - libffi=3.3=he6710b0_2
+  - libgcc-ng=9.1.0=hdf63c60_0
+  - libstdcxx-ng=9.1.0=hdf63c60_0
+  - ncurses=6.2=he6710b0_1
+  - openssl=1.1.1h=h7b6447c_0
+  - pip=20.2.4=py38_0
+  - python=3.8.5=h7579374_1
+  - readline=8.0=h7b6447c_0
+  - setuptools=50.3.0=py38hb0f4dca_1
+  - sqlite=3.33.0=h62c20be_0
+  - tk=8.6.10=hbc83047_0
+  - wheel=0.35.1=py_0
+  - xz=5.2.5=h7b6447c_0
+  - zlib=1.2.11=h7b6447c_3
+  - pip:
+    - ansible==2.10.1
+    - ansible-base==2.10.2
+    - cffi==1.14.3
+    - cryptography==3.2.1
+    - jinja2==2.11.2
+    - jmespath==0.9.4
+    - markupsafe==1.1.1
+    - niet==2.3.0
+    - packaging==20.4
+    - pycparser==2.20
+    - pyparsing==2.4.7
+    - pyyaml==5.1
+    - six==1.15.0
+prefix: /home/tobi/anaconda3/envs/ansible
+

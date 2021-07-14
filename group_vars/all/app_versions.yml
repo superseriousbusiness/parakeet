@@ -1,0 +1,9 @@
+---
+
+app_versions:
+    element: "v1.7.14"
+    nginx: "1.19.5-alpine"
+    openldap: "1.5.0"
+    postgres: "13-alpine"
+    synapse: "v1.37.1"
+    traefik: "v2.3.1"

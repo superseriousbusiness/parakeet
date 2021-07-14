@@ -1,0 +1,30 @@
+---
+
+- name: "template element config file"
+  template:
+    src: "elementconfig.json.j2"
+    dest: "{{ element_config_file }}"
+    owner: 1000
+    group: 1000
+  notify:
+    - "restart element"
+
+- name: "deploy element"
+  docker_container:
+    name: "element"
+    image: "vectorim/element-web:{{ app_versions.element }}"
+    networks:
+      - name: "{{ docker_network_names.synapse }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ element_config_file }}:/app/config.json"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.element-synapse.loadbalancer.server.port: "80"
+      traefik.http.routers.element_https.rule: "Host(`{{ element_hostname }}`)"
+      traefik.http.routers.element_https.tls: "true"
+      traefik.http.routers.element_https.entrypoints: "websecure"

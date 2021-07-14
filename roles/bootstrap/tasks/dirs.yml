@@ -1,0 +1,8 @@
+---
+
+- name: "create organization dir"
+  file:
+    path: "{{ top_level_dir }}"
+    state: "directory"
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"

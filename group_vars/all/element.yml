@@ -1,0 +1,3 @@
+---
+
+element_config_file: "{{ synapse_dir }}/elementconfig.json"

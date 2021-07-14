@@ -1,0 +1,11 @@
+---
+
+- name: "openldap"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | openldap"
+      include_role:
+        name: openldap

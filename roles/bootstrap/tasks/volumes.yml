@@ -1,0 +1,15 @@
+---
+
+- name: "create docker volumes"
+  docker_volume:
+    name: "{{ item.value }}"
+  loop: "{{ docker_volumes | dict2items }}"
+
+- name: "chown docker volumes"
+  file:
+    path: /var/lib/docker/volumes/{{ item.value }}/_data
+    state: directory
+    recurse: yes
+    owner: "{{ user_group[item.key].uid }}"
+    group: "{{ user_group[item.key].gid }}"
+  loop: "{{ docker_volumes | dict2items }}"

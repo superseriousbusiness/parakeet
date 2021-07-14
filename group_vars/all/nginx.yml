@@ -1,0 +1,4 @@
+---
+
+nginx_dir: "{{ synapse_dir }}/nginx"
+nginx_config_file: "{{ nginx_dir }}/nginx.conf"

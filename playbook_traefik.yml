@@ -1,0 +1,11 @@
+---
+
+- name: "set up traefik"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | traefik"
+      include_role:
+        name: traefik

@@ -1,0 +1,13 @@
+---
+
+- name: Create parakeet group
+  ansible.builtin.group:
+    name: parakeet
+    state: present
+    gid: "{{ user_group.parakeet.gid }}"
+
+- name: Create parakeet user
+  ansible.builtin.user:
+    name: parakeet
+    uid: "{{ user_group.parakeet.uid }}"
+    group: parakeet

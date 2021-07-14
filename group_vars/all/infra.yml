@@ -1,0 +1,9 @@
+---
+
+organization: "superseriousbusiness"
+top_level_domain: "{{ organization }}.org"
+admin_email_address: "admin@{{ top_level_domain }}"
+top_level_dir: "/opt/parakeet"
+
+default_user: 'parakeet'
+default_group: 'parakeet'

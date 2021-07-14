@@ -1,0 +1,39 @@
+---
+
+- name: disable UFW
+  ufw:
+    state: disabled
+
+- name: ufw reset defaults
+  shell:
+    cmd: echo y | ufw reset
+
+- name: deny incoming
+  ufw:
+    direction: incoming
+    policy: deny
+
+- name: allow outgoing
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: per-host rules
+  ufw: "{{ item }}"
+  loop: "{{ ufw_rules }}"
+
+- name: Allow ssh access
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: enable UFW
+  ufw:
+    state: enabled
+
+### Remove iptables-persistent now, since ufw is installed
+- name: remove iptables-persistent
+  apt:
+    name: iptables-persistent
+    state: absent
+    purge: yes

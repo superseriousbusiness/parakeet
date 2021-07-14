@@ -1,0 +1,22 @@
+---
+
+- name: "deploy postgres"
+  docker_container:
+    name: "postgres"
+    image: "postgres:{{ app_versions.postgres }}"
+    env:
+      POSTGRES_DB: "{{ postgres_db }}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_HOST_AUTH_METHOD: "md5"
+    networks: "{{ all_docker_networks }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.postgresdata }}:/var/lib/postgresql/data"
+      - "{{ docker_volumes.postgresbackup }}:/var/lib/postgresql/postgresbackup"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]

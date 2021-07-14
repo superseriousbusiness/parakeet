@@ -1,0 +1,4 @@
+---
+
+postgres_db: "postgres"
+postgres_user: "postgres"

@@ -1,0 +1,7 @@
+---
+
+openldap_dir: "{{ top_level_dir }}/openldap"
+openldap_config_file: "{{ openldap_dir }}/slapd.conf"
+custom_ldif_location: "{{ openldap_dir }}/initial.ldif"
+ldap_readonly_user: "ldapreadonly"
+

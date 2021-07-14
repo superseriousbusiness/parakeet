@@ -1,0 +1,12 @@
+---
+
+docker_network_names:
+    synapse: "synapse"
+
+docker_volumes:
+    postgresbackup: "postgresbackup"
+    postgresdata: "postgresdata"
+    synapse: "synapse"
+    traefikconfig: "traefikconfig"
+    openldapdata: "openldapdata"
+    openldapconfig: "openldapconfig"

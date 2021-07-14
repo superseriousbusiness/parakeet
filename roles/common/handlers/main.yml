@@ -1,0 +1,31 @@
+---
+
+########################
+### SYNAPSE HANDLERS ###
+########################
+- name: "restart synapse"
+  docker_container:
+    name: "synapse"
+    state: "started"
+    restart: true
+
+- name: "restart element"
+  docker_container:
+    name: "element"
+    state: "started"
+    restart: true
+
+- name: "restart nginx"
+  docker_container:
+    name: "matrix_nginx"
+    state: "started"
+    restart: true
+
+########################
+### TRAEFIK HANDLERS ###
+########################
+- name: "restart traefik"
+  docker_container:
+    name: "traefik"
+    state: "started"
+    restart: true
