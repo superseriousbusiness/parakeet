@@ -1,5 +1,5 @@
 ---
 
 ####### MATRIX ########
-element_hostname: "chat.{{ top_level_domain }}"
-synapse_hostname: "matrix.{{ top_level_domain }}"
+element_hostname: "chat.{{ domain }}"
+synapse_hostname: "matrix.{{ domain }}"
