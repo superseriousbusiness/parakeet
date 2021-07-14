@@ -445,11 +445,11 @@ retention:
 # instance, if using certbot, use `fullchain.pem` as your certificate,
 # not `cert.pem`).
 #
-#tls_certificate_path: "/data/ondergrond.org.tls.crt"
+#tls_certificate_path: "/data/tls.crt"
 
 # PEM-encoded private key for TLS
 #
-#tls_private_key_path: "/data/ondergrond.org.tls.key"
+#tls_private_key_path: "/data/tls.key"
 
 # Whether to verify TLS server certificates for outbound federation requests.
 #
@@ -1245,7 +1245,7 @@ account_threepid_delegates:
 # homeserver. This behaviour can be customised with the settings below.
 #
 auto_join_rooms:
-  - "#general:ondergrond.org"
+  - "#general:{{ top_level_domain }}"
 
 # Where auto_join_rooms are specified, setting this flag ensures that the
 # the rooms exist by creating them when the first user on the
@@ -2030,7 +2030,7 @@ email:
   # Note that the placeholder must be written '%(app)s', including the
   # trailing 's'.
   #
-  notif_from: "Your Friendly %(app)s homeserver <admin@ondergrond.org>"
+  notif_from: "Your Friendly %(app)s homeserver <{{ admin_email_address }}>"
 
   # app_name defines the default value for '%(app)s' in notif_from and email
   # subjects. It defaults to 'Matrix'.
@@ -2053,7 +2053,7 @@ email:
   # (This setting used to be called riot_base_url; the old name is still
   # supported for backwards-compatibility but is now deprecated.)
   #
-  client_base_url: "https://chat.ondergrond.org"
+  client_base_url: https://{{ element_hostname }}
 
   # Configure the time that a validation email will expire after sending.
   # Defaults to 1h.
