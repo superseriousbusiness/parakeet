@@ -7,6 +7,26 @@
     owner: "{{ default_user }}"
     group: "{{ default_group }}"
 
+- name: "check if synapse signing key already exists"
+  stat:
+    path: "/var/lib/docker/volumes/{{ docker_volumes.synapse }}/_data/{{ domain }}.signing.key"
+  register: matrix_synapse_signing_key_stat
+
+- name: "generate signing key"
+  command: |
+    docker run
+    --rm
+    --name=synapse-config
+    --user={{  user_group.synapse.uid }}:{{ user_group.synapse.gid }}
+    --cap-drop=ALL
+    -v {{ docker_volumes.synapse }}:/data
+    -e SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    -e SYNAPSE_SERVER_NAME={{ domain }}
+    -e SYNAPSE_REPORT_STATS=no
+    matrixdotorg/synapse:{{ app_versions.synapse }}
+    generate
+  when: "not matrix_synapse_signing_key_stat.stat.exists"
+
 - name: "template synapse config file"
   template:
     src: "config.yaml.j2"
@@ -27,8 +47,8 @@
     detach: true
     restart_policy: "always"
     volumes:
-      - "{{ synapse_config_file }}:/data/homeserver.yaml"
       - "{{ docker_volumes.synapse }}:/data"
+      - "{{ synapse_config_file }}:/data/homeserver.yaml"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     labels:
@@ -36,5 +56,6 @@
       traefik.http.services.synapse-synapse.loadbalancer.server.port: "8008"
       traefik.http.routers.synapse_https.rule: "Host(`{{ synapse_hostname }}`)"
       traefik.http.routers.synapse_https.tls: "true"
+      traefik.http.routers.synapse_https.tls.certresolver: "le"
       traefik.http.routers.synapse_https.entrypoints: "websecure"
       traefik.http.routers.synapse_https.service: "synapse-synapse"

@@ -27,4 +27,5 @@
       traefik.http.services.element-synapse.loadbalancer.server.port: "80"
       traefik.http.routers.element_https.rule: "Host(`{{ element_hostname }}`)"
       traefik.http.routers.element_https.tls: "true"
+      traefik.http.routers.element_https.tls.certresolver: "le"
       traefik.http.routers.element_https.entrypoints: "websecure"

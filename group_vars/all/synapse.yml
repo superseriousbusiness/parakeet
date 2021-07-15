@@ -1,10 +1,7 @@
 ---
 
-
-
 synapse_dir: "{{ top_level_dir }}/synapse"
 synapse_config_file: "/var/lib/docker/volumes/{{ docker_volumes.synapse }}/_data/homeserver.yaml"
-matrix_sync_script: "{{ synapse_dir }}/syncaccounts.sh"
 
-synapse_postgres_user: "synapse_user"
+synapse_postgres_user: "synapse"
 synapse_postgres_db: "synapse"

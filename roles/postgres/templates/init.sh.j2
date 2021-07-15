@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER {{ synapse_postgres_user }} WITH PASSWORD '{{ synapse_postgres_password }}';
+    CREATE DATABASE {{ synapse_postgres_db }}
+      WITH OWNER={{ synapse_postgres_user }}
+      LOCALE='C'
+      ENCODING='UTF8'
+      TEMPLATE=template0;
+    GRANT ALL PRIVILEGES ON DATABASE {{ synapse_postgres_db }} TO {{ synapse_postgres_user }};
+EOSQL

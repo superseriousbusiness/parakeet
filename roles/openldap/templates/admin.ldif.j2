@@ -1,0 +1,7 @@
+dn: uid=admin,ou=users,{{ ldap_base_dn }}
+objectClass: person
+objectClass: inetOrgPerson
+sn: admin
+cn: admin
+mail: {{ admin_email_address }}
+userpassword: {{ admin_password }}

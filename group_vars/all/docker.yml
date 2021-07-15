@@ -8,5 +8,6 @@ docker_volumes:
     postgresdata: "postgresdata"
     synapse: "synapse"
     traefikconfig: "traefikconfig"
+    traefikcerts: "traefikcerts"
     openldapdata: "openldapdata"
     openldapconfig: "openldapconfig"

@@ -1,15 +1,5 @@
 ---
 
-- name: "protonmail"
-  hosts: all
-  become: true
-  roles:
-    - common
-  tasks:
-    - name: "task | protonmail"
-      include_role:
-        name: protonmail
-
 - name: "set up matrix"
   hosts: all
   become: true

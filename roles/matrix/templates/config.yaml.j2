@@ -717,9 +717,9 @@ database:
  name: psycopg2
  args:
    user: {{ synapse_postgres_user }}
-   password: {{ synapse_postgres_password }}
-   database: {{ synapse_postgres_db }}
-   host: postgres
+   password: "{{ synapse_postgres_password }}"
+   database: "{{ synapse_postgres_db }}"
+   host: "postgres"
    cp_min: 5
    cp_max: 10
 #
@@ -1138,7 +1138,7 @@ account_validity:
 # The user must provide all of the below types of 3PID when registering.
 #
 registrations_require_3pid:
- - email
+  - email
 #  - msisdn
 
 # Explicitly disable asking for MSISDNs from the registration
@@ -2001,17 +2001,17 @@ password_config:
 email:
   # The hostname of the outgoing SMTP server to use. Defaults to 'localhost'.
   #
-  smtp_host: protonmail
+  #smtp_host:
 
   # The port on the mail server for outgoing SMTP. Defaults to 25.
   #
-  smtp_port: {{ protonmail_port }}
+  #smtp_port:
 
   # Username/password for authentication to the SMTP server. By default, no
   # authentication is attempted.
   #
-  smtp_user: "{{ protonmail_email }}"
-  smtp_pass: "{{ protonmail_smtp_password }}"
+  #smtp_user:
+  #smtp_pass:
 
   # Uncomment the following to require TLS transport security for SMTP.
   # By default, Synapse will connect over plain text, and will then switch to
@@ -2184,22 +2184,19 @@ email:
 # respectively.
 #
 password_providers:
-#    # Example config for an LDAP auth provider
-#    - module: "ldap_auth_provider.LdapAuthProvider"
-#      config:
-#        enabled: true
-#        uri: "ldap://ldap.example.com:389"
-#        start_tls: true
-#        base: "ou=users,dc=example,dc=com"
-#        attributes:
-#           uid: "cn"
-#           mail: "email"
-#           name: "givenName"
-#        #bind_dn:
-#        #bind_password:
-#        #filter: "(objectClass=posixAccount)"
-
-
+  - module: "ldap_auth_provider.LdapAuthProvider"
+    config:
+      enabled: true
+      uri: "ldap://openldap:389"
+      start_tls: false
+      base: "ou=users,{{ ldap_base_dn }}"
+      attributes:
+         uid: "cn"
+         mail: "mail"
+         name: "cn"
+      bind_dn: "{{ ldap_readonly_user_dn }}"
+      bind_password: "{{ ldap_readonly_password }}"
+      filter: "(objectClass=inetOrgPerson)"
 
 # Clients requesting push notifications can either have the body of
 # the message sent in the notification poke along with other details

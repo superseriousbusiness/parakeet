@@ -1,7 +1,9 @@
 ---
 
 openldap_dir: "{{ top_level_dir }}/openldap"
-initial_ldif_location: "{{ openldap_dir }}/initial.ldif"
+container_ldif_location: "{{ openldap_dir }}/container.ldif"
+admin_ldif_location: "{{ openldap_dir }}/admin.ldif"
 ldap_readonly_user: "ldapreadonly"
 ldap_base_dn: "dc={{ organization }},dc={{ top_level_domain }}"
 ldap_admin_dn: "cn=admin,{{ ldap_base_dn }}"
+ldap_readonly_user_dn: "cn={{ ldap_readonly_user }},{{ ldap_base_dn }}"
