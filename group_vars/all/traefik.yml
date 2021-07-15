@@ -5,3 +5,5 @@ traefik_dynamic_config_filename: "dynamic.toml"
 
 traefik_config_destination: "/var/lib/docker/volumes/{{ docker_volumes.traefikconfig }}/_data/{{ traefik_config_filename }}"
 traefik_dynamic_config_destination: "/var/lib/docker/volumes/{{ docker_volumes.traefikconfig }}/_data/{{ traefik_dynamic_config_filename }}"
+
+traefik_certs_location: "/certs"

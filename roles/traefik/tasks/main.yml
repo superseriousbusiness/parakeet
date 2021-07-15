@@ -1,0 +1,37 @@
+---
+
+- name: "template traefik config"
+  template:
+    src: "traefik.toml.j2"
+    dest: "{{ traefik_config_destination }}"
+    owner: "root"
+    group: "root"
+    mode: "600"
+  notify:
+    - "restart traefik"
+
+- name: "template traefik dynamic config"
+  template:
+    src: "dynamic.toml.j2"
+    dest: "{{ traefik_dynamic_config_destination }}"
+    owner: "root"
+    group: "root"
+    mode: "600"
+  notify:
+    - "restart traefik"
+
+- name: "deploy traefik"
+  docker_container:
+    name: "traefik"
+    image: "traefik:{{ app_versions.traefik }}"
+    network_mode: host
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ docker_volumes.traefikconfig }}:/{{ docker_volumes.traefikconfig }}"
+      - "{{ docker_volumes.traefikcerts }}:{{ traefik_certs_location }}"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    command: "--configFile=/{{ docker_volumes.traefikconfig }}/{{ traefik_config_filename }}"

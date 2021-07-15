@@ -7,10 +7,18 @@
     owner: "{{ default_user }}"
     group: "{{ default_group }}"
 
-- name: "template openldap ldif file"
+- name: "template container ldif file"
   template:
-    src: "initial.ldif.j2"
-    dest: "{{ initial_ldif_location }}"
+    src: "container.ldif.j2"
+    dest: "{{ container_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+
+- name: "template admin ldif file"
+  template:
+    src: "admin.ldif.j2"
+    dest: "{{ admin_ldif_location }}"
     owner: "{{ user_group.openldapconfig.uid }}"
     group: "{{ user_group.openldapconfig.gid }}"
     mode: "600"
@@ -36,7 +44,8 @@
     volumes:
       - "{{ docker_volumes.openldapdata }}:/var/lib/ldap"
       - "{{ docker_volumes.openldapconfig }}:/etc/ldap/slapd.d"
-      - "{{ initial_ldif_location }}:/ldif/initial.ldif"
+      - "{{ container_ldif_location }}:/ldif/container.ldif"
+      - "{{ admin_ldif_location }}:/ldif/admin.ldif"
     networks_cli_compatible: no
     container_default_behavior: compatibility
 
@@ -50,9 +59,20 @@
   retries: 10
   delay: 5
 
-- name: "init ldap"
+- name: "init container"
   shell:
-    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/initial.ldif'"
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/container.ldif'"
+  register: ldap_add_output
+  until: "ldap_add_output.rc == 68"
+  failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
+  changed_when: "ldap_add_output.rc == 0"
+  retries: 10
+  delay: 5
+
+
+- name: "init admin"
+  shell:
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/admin.ldif'"
   register: ldap_add_output
   until: "ldap_add_output.rc == 68"
   failed_when: "ldap_add_output.rc not in [ 0, 68 ]"

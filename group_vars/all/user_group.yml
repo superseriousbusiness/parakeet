@@ -31,6 +31,9 @@ user_group:
     traefikconfig:
       uid: "0"
       gid: "0"
+    traefikcerts:
+      uid: "0"
+      gid: "0"
     parakeet:
       uid: "1001"
       gid: "1001"

@@ -8,6 +8,3 @@
 
 - name: "nginx"
   import_tasks: nginx.yml
-
-- name: "sync accounts"
-  import_tasks: syncaccounts.yml

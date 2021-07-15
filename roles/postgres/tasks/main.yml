@@ -1,13 +1,28 @@
 ---
 
+- name: "create postgres dir"
+  file:
+    path: "{{ postgres_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template postgres init"
+  template:
+    src: "init.sh.j2"
+    dest: "{{ postgres_init_location }}"
+    owner: "{{ user_group.postgresdata.uid }}"
+    group: "{{ user_group.postgresdata.gid }}"
+    mode: "600"
+
 - name: "deploy postgres"
   docker_container:
     name: "postgres"
     image: "postgres:{{ app_versions.postgres }}"
     env:
-      POSTGRES_DB: "{{ postgres_db }}"
-      POSTGRES_USER: "{{ postgres_user }}"
-      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_DB: "{{ postgres_default_db }}"
+      POSTGRES_USER: "{{ postgres_default_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_default_password }}"
       POSTGRES_HOST_AUTH_METHOD: "md5"
     networks: "{{ all_docker_networks }}"
     purge_networks: yes
@@ -16,6 +31,7 @@
     volumes:
       - "{{ docker_volumes.postgresdata }}:/var/lib/postgresql/data"
       - "{{ docker_volumes.postgresbackup }}:/var/lib/postgresql/postgresbackup"
+      - "{{ postgres_init_location }}:/docker-entrypoint-initdb.d/init.sh"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     healthcheck:

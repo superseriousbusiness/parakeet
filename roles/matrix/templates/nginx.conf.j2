@@ -6,7 +6,7 @@ http {
         server_name {{ domain }};
 
         location /.well-known/matrix/server {
-            return 200 '{"m.server": "{{ synapse_hostname }}"}';
+            return 200 '{"m.server": "{{ synapse_hostname }}:443"}';
         }
 
         location /_matrix/static {

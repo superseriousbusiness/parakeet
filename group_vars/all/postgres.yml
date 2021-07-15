@@ -1,4 +1,7 @@
 ---
 
-postgres_db: "postgres"
-postgres_user: "postgres"
+postgres_dir: "{{ top_level_dir }}/postgres"
+postgres_init_location: "{{ postgres_dir }}/init.sh"
+
+postgres_default_db: "postgres"
+postgres_default_user: "postgres"
