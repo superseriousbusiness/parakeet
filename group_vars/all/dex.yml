@@ -1,0 +1,7 @@
+---
+
+dex_dir: "{{ top_level_dir }}/dex"
+dex_config_file: "/var/lib/docker/volumes/{{ docker_volumes.dex }}/_data/config.yaml"
+
+dex_postgres_user: "dex"
+dex_postgres_db: "dex"

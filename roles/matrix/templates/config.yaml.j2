@@ -2189,11 +2189,11 @@ password_providers:
       enabled: true
       uri: "ldap://openldap:389"
       start_tls: false
-      base: "ou=users,{{ ldap_base_dn }}"
+      base: "{{ ldap_users_dn }}"
       attributes:
-         uid: "cn"
+         uid: "uid"
          mail: "mail"
-         name: "cn"
+         name: "displayName"
       bind_dn: "{{ ldap_readonly_user_dn }}"
       bind_password: "{{ ldap_readonly_password }}"
       filter: "(objectClass=inetOrgPerson)"
