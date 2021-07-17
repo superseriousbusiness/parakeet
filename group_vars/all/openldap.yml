@@ -1,8 +1,12 @@
 ---
 
 openldap_dir: "{{ top_level_dir }}/openldap"
-container_ldif_location: "{{ openldap_dir }}/container.ldif"
+
+users_ldif_location: "{{ openldap_dir }}/users.ldif"
 admin_ldif_location: "{{ openldap_dir }}/admin.ldif"
+
+groups_ldif_location: "{{ openldap_dir }}/groups.ldif"
+admin_group_ldif_location: "{{ openldap_dir }}/admin_group.ldif"
 
 ldap_base_dn: "dc={{ organization }},dc={{ top_level_domain }}"
 ldap_users_dn: "ou=users,{{ ldap_base_dn }}"
@@ -15,4 +19,4 @@ ldap_readonly_user: "ldapreadonly"
 ldap_readonly_user_dn: "cn={{ ldap_readonly_user }},{{ ldap_base_dn }}"
 
 ldap_admin_user: "admin"
-ldap_admin_user_dn: "uid={{ ldap_admin }},{{ ldap_users_dn }}"
+ldap_admin_user_dn: "uid={{ ldap_admin_user }},{{ ldap_users_dn }}"

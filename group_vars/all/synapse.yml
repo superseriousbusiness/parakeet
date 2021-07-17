@@ -5,3 +5,6 @@ synapse_config_file: "/var/lib/docker/volumes/{{ docker_volumes.synapse }}/_data
 
 synapse_postgres_user: "synapse"
 synapse_postgres_db: "synapse"
+
+synapse_localpart_template: "{% raw -%}{{ user.name }}{% endraw -%}"
+synapse_display_name_template: "{% raw -%}{{ user.name|capitalize }}{% endraw -%}"

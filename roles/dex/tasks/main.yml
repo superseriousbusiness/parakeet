@@ -1,23 +1,39 @@
 ---
 
+- name: "create dex dir"
+  file:
+    path: "{{ dex_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template dex config"
+  template:
+    src: "config.docker.yaml.j2"
+    dest: "{{ dex_config_file }}"
+    owner: "{{ user_group.parakeet.uid }}"
+    group: "{{ user_group.parakeet.gid }}"
+    mode: "600"
+  notify:
+    - "restart dex"
+
 - name: "deploy dex"
   docker_container:
     name: "dex"
     image: "ghcr.io/dexidp/dex:{{ app_versions.dex }}"
-    env:
-      TODO: AHHH
     networks:
       - name: "{{ docker_network_names.dex }}"
     purge_networks: yes
     detach: true
     restart_policy: "always"
     volumes:
-      - "{{ docker_volumes.dex }}:/???????????????"
+      - "{{ dex_config_file }}:/config.docker.yaml"
     networks_cli_compatible: no
     container_default_behavior: compatibility
+    command: "dex serve /config.docker.yaml"
     labels:
       traefik.enable: "true"
-      traefik.http.services.dex.loadbalancer.server.port: "?????"
+      traefik.http.services.dex.loadbalancer.server.port: "5556"
       traefik.http.routers.dex_https.rule: "Host(`{{ dex_hostname }}`)"
       traefik.http.routers.dex_https.tls: "true"
       traefik.http.routers.dex_https.tls.certresolver: "le"

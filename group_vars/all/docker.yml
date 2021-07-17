@@ -5,7 +5,6 @@ docker_network_names:
     dex: "dex"
 
 docker_volumes:
-    dex: "dex"
     postgresbackup: "postgresbackup"
     postgresdata: "postgresdata"
     synapse: "synapse"

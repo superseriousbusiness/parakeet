@@ -1,0 +1,11 @@
+---
+
+- name: "set up dex"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | dex"
+      include_role:
+        name: dex

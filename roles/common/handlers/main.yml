@@ -29,3 +29,13 @@
     name: "traefik"
     state: "started"
     restart: true
+
+########################
+##### DEX HANDLERS #####
+########################
+
+- name: "restart dex"
+  docker_container:
+    name: "dex"
+    state: "started"
+    restart: true
