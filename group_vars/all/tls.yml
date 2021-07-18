@@ -18,6 +18,8 @@ certs:
       - keyEncipherment
     extended_key_usage:
       - serverAuth
+    owner: "{{ user_group.openldapdata.uid }}"
+    group: "{{ user_group.openldapdata.gid }}"
   postgres:
     hostname: "{{ container_addresses.postgres }}"
     private_key_type: RSA
@@ -30,3 +32,5 @@ certs:
       - keyEncipherment
     extended_key_usage:
       - serverAuth
+    owner: "{{ user_group.postgresdata.uid }}"
+    group: "{{ user_group.postgresdata.gid }}"

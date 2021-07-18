@@ -5,3 +5,6 @@ postgres_init_location: "{{ postgres_dir }}/init.sh"
 
 postgres_default_db: "postgres"
 postgres_default_user: "postgres"
+
+postgres_certs_crt_destination: "/var/lib/postgresql/server.crt"
+postgres_certs_key_destination: "/var/lib/postgresql/server.key"

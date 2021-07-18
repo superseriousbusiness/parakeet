@@ -19,7 +19,8 @@ storage:
     user: "{{ dex_postgres_user }}"
     password: "{{ dex_postgres_password }}"
     ssl:
-      mode: disable
+      mode: verify-full
+      caFile: "{{ dex_ca_crt_path }}"
 
 # HTTP service configuration
 web:

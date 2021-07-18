@@ -719,9 +719,11 @@ database:
    user: {{ synapse_postgres_user }}
    password: "{{ synapse_postgres_password }}"
    database: "{{ synapse_postgres_db }}"
-   host: "postgres"
+   host: "{{ container_addresses.postgres }}"
    cp_min: 5
    cp_max: 10
+   sslmode: verify-full
+   sslrootcert: "{{ synapse_ca_crt_path }}"
 #
 # For more information on using Synapse with Postgres, see `docs/postgres.md`.
 #
