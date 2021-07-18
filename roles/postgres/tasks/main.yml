@@ -17,7 +17,7 @@
 
 - name: "deploy postgres"
   docker_container:
-    name: "postgres"
+    name: "{{ container_addresses.postgres }}"
     image: "postgres:{{ app_versions.postgres }}"
     env:
       POSTGRES_DB: "{{ postgres_default_db }}"

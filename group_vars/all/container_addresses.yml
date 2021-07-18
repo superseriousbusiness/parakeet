@@ -1,0 +1,5 @@
+---
+
+container_addresses:
+  openldap: openldap
+  postgres: postgres

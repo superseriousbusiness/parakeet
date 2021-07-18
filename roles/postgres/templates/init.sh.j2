@@ -10,3 +10,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       TEMPLATE=template0;
     GRANT ALL PRIVILEGES ON DATABASE {{ synapse_postgres_db }} TO {{ synapse_postgres_user }};
 EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER {{ dex_postgres_user }} WITH PASSWORD '{{ dex_postgres_password }}';
+    CREATE DATABASE {{ dex_postgres_db }}
+      WITH OWNER={{ dex_postgres_user }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ dex_postgres_db }} TO {{ dex_postgres_user }};
+EOSQL

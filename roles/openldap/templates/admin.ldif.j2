@@ -1,7 +1,9 @@
-dn: uid=admin,ou=users,{{ ldap_base_dn }}
+dn: {{ ldap_admin_user_dn }}
 objectClass: person
 objectClass: inetOrgPerson
-sn: admin
 cn: admin
+displayName: admin
+sn: admin
+uid: admin
 mail: {{ admin_email_address }}
-userpassword: {{ admin_password }}
+userpassword: {{ admin_password_hashed }}

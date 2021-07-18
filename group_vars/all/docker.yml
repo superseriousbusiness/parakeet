@@ -2,6 +2,7 @@
 
 docker_network_names:
     synapse: "synapse"
+    dex: "dex"
 
 docker_volumes:
     postgresbackup: "postgresbackup"

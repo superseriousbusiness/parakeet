@@ -1,0 +1,10 @@
+---
+
+dex_dir: "{{ top_level_dir }}/dex"
+dex_config_file: "{{ dex_dir }}/config.docker.yaml"
+
+dex_postgres_user: "dex"
+dex_postgres_db: "dex"
+
+dex_clients:
+  synapse: "synapse_client"

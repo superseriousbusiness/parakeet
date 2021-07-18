@@ -1,0 +1,170 @@
+# The base path of Dex and the external name of the OpenID Connect service.
+# This is the canonical URL that all clients MUST use to refer to Dex. If a
+# path is provided, Dex's HTTP service will listen at a non-root URL.
+issuer: https://{{ dex_hostname }}
+
+# The storage configuration determines where Dex stores its state.
+# Supported options include:
+#   - SQL flavors
+#   - key-value stores (eg. etcd)
+#   - Kubernetes Custom Resources
+#
+# See the documentation (https://dexidp.io/docs/storage/) for further information.
+storage:
+  type: postgres
+  config:
+    host: "{{ container_addresses.postgres }}"
+    port: 5432
+    database: "{{ dex_postgres_db }}"
+    user: "{{ dex_postgres_user }}"
+    password: "{{ dex_postgres_password }}"
+    ssl:
+      mode: disable
+
+# HTTP service configuration
+web:
+  http: 0.0.0.0:5556
+
+# Dex UI configuration
+# frontend:
+#   issuer: dex
+#   logoURL: theme/logo.png
+#   dir: ""
+#   theme: light
+
+# Telemetry configuration
+# telemetry:
+#   http: 127.0.0.1:5558
+
+# logger:
+#   level: "debug"
+#   format: "text" # can also be "json"
+
+# gRPC API configuration
+# Uncomment this block to enable the gRPC API.
+# See the documentation (https://dexidp.io/docs/api/) for further information.
+# grpc:
+#   addr: 127.0.0.1:5557
+#   tlsCert: examples/grpc-client/server.crt
+#   tlsKey: examples/grpc-client/server.key
+#   tlsClientCA: examples/grpc-client/ca.crt
+
+# Expiration configuration for tokens, signing keys, etc.
+# expiry:
+#   deviceRequests: "5m"
+#   signingKeys: "6h"
+#   idTokens: "24h"
+
+# OAuth2 configuration
+oauth2:
+  # use ["code", "token", "id_token"] to enable implicit flow for web-only clients
+  responseTypes: ["code", "token", "id_token"]
+
+  # By default, Dex will ask for approval to share data with application
+  # (approval for sharing data from connected IdP to Dex is separate process on IdP)
+  skipApprovalScreen: true
+
+  # If only one authentication method is enabled, the default behavior is to
+  # go directly to it. For connected IdPs, this redirects the browser away
+  # from application to upstream provider such as the Google login page
+  alwaysShowLoginScreen: false
+  # Uncomment to use a specific connector for password grants
+  # passwordConnector: local
+
+# Static clients registered in Dex by default.
+#
+# Alternatively, clients may be added through the gRPC API.
+staticClients:
+  - id: {{ dex_clients.synapse }}
+    redirectURIs:
+      - 'https://{{ synapse_hostname }}/_synapse/client/oidc/callback'
+    name: 'Synapse'
+    secret: '{{ dex_client_secrets.synapse }}'
+
+# Connectors are used to authenticate users agains upstream identity providers.
+#
+# See the documentation (https://dexidp.io/docs/connectors/) for further information.
+connectors:
+- type: ldap
+  # Required field for connector id.
+  id: ldap
+  # Required field for connector name.
+  name: LDAP
+  config:
+    # Host and optional port of the LDAP server in the form "host:port".
+    # If the port is not supplied, it will be guessed based on "insecureNoSSL",
+    # and "startTLS" flags. 389 for insecure or StartTLS connections, 636
+    # otherwise.
+    host: openldap:389
+
+    # Following field is required if the LDAP host is not using TLS (port 389).
+    # Because this option inherently leaks passwords to anyone on the same network
+    # as dex, THIS OPTION MAY BE REMOVED WITHOUT WARNING IN A FUTURE RELEASE.
+    #
+    insecureNoSSL: true
+
+    # If a custom certificate isn't provide, this option can be used to turn on
+    # TLS certificate checks. As noted, it is insecure and shouldn't be used outside
+    # of explorative phases.
+    #
+    insecureSkipVerify: true
+
+    # When connecting to the server, connect using the ldap:// protocol then issue
+    # a StartTLS command. If unspecified, connections will use the ldaps:// protocol
+    #
+    startTLS: false
+
+    # Path to a trusted root certificate file. Default: use the host's root CA.
+    # rootCA: /etc/dex/ldap.ca
+
+    # A raw certificate file can also be provided inline.
+    # rootCAData: ( base64 encoded PEM file )
+
+    # The DN and password for an application service account. The connector uses
+    # these credentials to search for users and groups. Not required if the LDAP
+    # server provides access for anonymous auth.
+    # Please note that if the bind password contains a `$`, it has to be saved in an
+    # environment variable which should be given as the value to `bindPW`.
+    bindDN: "{{ ldap_readonly_user_dn }}"
+    bindPW: "{{ ldap_readonly_password }}"
+
+    # The attribute to display in the provided password prompt. If unset, will
+    # display "Username"
+    usernamePrompt: Email
+
+    # User search maps a username and password entered by a user to a LDAP entry.
+    userSearch:
+      # BaseDN to start the search from. It will translate to the query
+      # "(&(objectClass=person)(uid=<username>))".
+      baseDN: "{{ ldap_users_dn }}"
+      # Optional filter to apply when searching the directory.
+      filter: "(objectClass=inetOrgPerson)"
+
+      # username attribute used for comparing user entries. This will be translated
+      # and combined with the other filter as "(<attr>=<username>)".
+      username: mail
+      # The following three fields are direct mappings of attributes on the user entry.
+      # String representation of the user.
+      idAttr: uid
+      # Required. Attribute to map to Email.
+      emailAttr: mail
+      # Maps to display name of users. No default value.
+      nameAttr: displayName
+
+    # Group search queries for groups given a user entry.
+    groupSearch:
+      # BaseDN to start the search from. It will translate to the query
+      # "(&(objectClass=group)(member=<user uid>))".
+      baseDN: "{{ ldap_groups_dn }}"
+      # Optional filter to apply when searching the directory.
+      filter: "(objectClass=groupOfNames)"
+
+      # Following list contains field pairs that are used to match a user to a group. It adds an additional
+      # requirement to the filter that an attribute in the group must match the user's
+      # attribute value.
+      userMatchers:
+      - userAttr: DN
+        groupAttr: member
+
+      # Represents group name.
+      nameAttr: cn

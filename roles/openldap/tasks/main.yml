@@ -7,25 +7,9 @@
     owner: "{{ default_user }}"
     group: "{{ default_group }}"
 
-- name: "template container ldif file"
-  template:
-    src: "container.ldif.j2"
-    dest: "{{ container_ldif_location }}"
-    owner: "{{ user_group.openldapconfig.uid }}"
-    group: "{{ user_group.openldapconfig.gid }}"
-    mode: "600"
-
-- name: "template admin ldif file"
-  template:
-    src: "admin.ldif.j2"
-    dest: "{{ admin_ldif_location }}"
-    owner: "{{ user_group.openldapconfig.uid }}"
-    group: "{{ user_group.openldapconfig.gid }}"
-    mode: "600"
-
 - name: "deploy openldap"
   docker_container:
-    name: "openldap"
+    name: "{{ container_addresses.openldap }}"
     image: "osixia/openldap:{{ app_versions.openldap }}"
     env:
       LDAP_ORGANISATION: "{{ organization }}"
@@ -44,8 +28,7 @@
     volumes:
       - "{{ docker_volumes.openldapdata }}:/var/lib/ldap"
       - "{{ docker_volumes.openldapconfig }}:/etc/ldap/slapd.d"
-      - "{{ container_ldif_location }}:/ldif/container.ldif"
-      - "{{ admin_ldif_location }}:/ldif/admin.ldif"
+      - "{{ openldap_dir }}:/ldif"
     networks_cli_compatible: no
     container_default_behavior: compatibility
 
@@ -59,22 +42,80 @@
   retries: 10
   delay: 5
 
-- name: "init container"
+- name: "hash admin password"
   shell:
-    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/container.ldif'"
+    cmd: "docker exec openldap 'slappasswd' '-s' '{{ admin_password }}'"
+  register: password_hash_output
+
+- name: "template users ldif file"
+  template:
+    src: "users.ldif.j2"
+    dest: "{{ users_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+
+- name: "template admin ldif file"
+  template:
+    src: "admin.ldif.j2"
+    dest: "{{ admin_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+  vars:
+    admin_password_hashed: "{{ password_hash_output.stdout }}"
+
+- name: "template groups ldif file"
+  template:
+    src: "groups.ldif.j2"
+    dest: "{{ groups_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+
+- name: "template admin group ldif file"
+  template:
+    src: "admin_group.ldif.j2"
+    dest: "{{ admin_group_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+
+- name: "init users"
+  shell:
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/users.ldif'"
   register: ldap_add_output
-  until: "ldap_add_output.rc == 68"
+  until: "ldap_add_output.rc in [ 0, 68 ]"
   failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
   changed_when: "ldap_add_output.rc == 0"
   retries: 10
   delay: 5
 
-
 - name: "init admin"
   shell:
     cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/admin.ldif'"
   register: ldap_add_output
-  until: "ldap_add_output.rc == 68"
+  until: "ldap_add_output.rc in [ 0, 68 ]"
+  failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
+  changed_when: "ldap_add_output.rc == 0"
+  retries: 10
+  delay: 5
+
+- name: "init groups"
+  shell:
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/groups.ldif'"
+  register: ldap_add_output
+  until: "ldap_add_output.rc in [ 0, 68 ]"
+  failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
+  changed_when: "ldap_add_output.rc == 0"
+  retries: 10
+  delay: 5
+
+- name: "init admin_group"
+  shell:
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/admin_group.ldif'"
+  register: ldap_add_output
+  until: "ldap_add_output.rc in [ 0, 68 ]"
   failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
   changed_when: "ldap_add_output.rc == 0"
   retries: 10
