@@ -49,6 +49,7 @@
     volumes:
       - "{{ docker_volumes.synapse }}:/data"
       - "{{ synapse_config_file }}:/data/homeserver.yaml"
+      - "{{ ca_crt_path }}:{{ synapse_ca_crt_path }}"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     labels:

@@ -19,7 +19,8 @@ storage:
     user: "{{ dex_postgres_user }}"
     password: "{{ dex_postgres_password }}"
     ssl:
-      mode: disable
+      mode: verify-full
+      caFile: "{{ dex_ca_crt_path }}"
 
 # HTTP service configuration
 web:
@@ -95,27 +96,27 @@ connectors:
     # If the port is not supplied, it will be guessed based on "insecureNoSSL",
     # and "startTLS" flags. 389 for insecure or StartTLS connections, 636
     # otherwise.
-    host: openldap:389
+    host: openldap:636
 
     # Following field is required if the LDAP host is not using TLS (port 389).
     # Because this option inherently leaks passwords to anyone on the same network
     # as dex, THIS OPTION MAY BE REMOVED WITHOUT WARNING IN A FUTURE RELEASE.
     #
-    insecureNoSSL: true
+    insecureNoSSL: false
 
     # If a custom certificate isn't provide, this option can be used to turn on
     # TLS certificate checks. As noted, it is insecure and shouldn't be used outside
     # of explorative phases.
     #
-    insecureSkipVerify: true
+    insecureSkipVerify: false
 
     # When connecting to the server, connect using the ldap:// protocol then issue
     # a StartTLS command. If unspecified, connections will use the ldaps:// protocol
     #
-    startTLS: false
+    # startTLS: true
 
     # Path to a trusted root certificate file. Default: use the host's root CA.
-    # rootCA: /etc/dex/ldap.ca
+    rootCA: "{{ dex_ca_crt_path }}"
 
     # A raw certificate file can also be provided inline.
     # rootCAData: ( base64 encoded PEM file )

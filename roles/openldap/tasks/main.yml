@@ -11,16 +11,21 @@
   docker_container:
     name: "{{ container_addresses.openldap }}"
     image: "osixia/openldap:{{ app_versions.openldap }}"
+    hostname: "{{ container_addresses.openldap }}"
     env:
       LDAP_ORGANISATION: "{{ organization }}"
       LDAP_DOMAIN: "{{ domain }}"
       LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
-      LDAP_TLS: "false"
+      LDAP_TLS: "true"
+      LDAP_TLS_VERIFY_CLIENT: "try"
       LDAP_READONLY_USER: "true"
       LDAP_READONLY_USER_USERNAME: "{{ ldap_readonly_user }}"
       LDAP_READONLY_USER_PASSWORD: "{{ ldap_readonly_password }}"
       LDAP_OPENLDAP_UID: "{{ user_group.openldapconfig.uid }}"
       LDAP_OPENLDAP_GID: "{{ user_group.openldapconfig.gid }}"
+      LDAP_SEED_INTERNAL_LDAP_TLS_CRT_FILE: "{{ openldap_certs_crt_destination }}"
+      LDAP_SEED_INTERNAL_LDAP_TLS_KEY_FILE: "{{ openldap_certs_key_destination }}"
+      LDAP_SEED_INTERNAL_LDAP_TLS_CA_CRT_FILE: "{{ openldap_certs_ca_crt_destination }}"
     networks: "{{ all_docker_networks }}"
     purge_networks: yes
     detach: true
@@ -29,6 +34,9 @@
       - "{{ docker_volumes.openldapdata }}:/var/lib/ldap"
       - "{{ docker_volumes.openldapconfig }}:/etc/ldap/slapd.d"
       - "{{ openldap_dir }}:/ldif"
+      - "{{ certs.openldap.cert_filename }}:{{ openldap_certs_crt_destination }}"
+      - "{{ certs.openldap.private_key_filename }}:{{ openldap_certs_key_destination }}"
+      - "{{ ca_crt_path }}:{{ openldap_certs_ca_crt_destination }}"
     networks_cli_compatible: no
     container_default_behavior: compatibility
 

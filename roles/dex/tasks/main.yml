@@ -28,6 +28,7 @@
     restart_policy: "always"
     volumes:
       - "{{ dex_config_file }}:/config.docker.yaml"
+      - "{{ ca_crt_path }}:{{ dex_ca_crt_path }}"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     command: "dex serve /config.docker.yaml"

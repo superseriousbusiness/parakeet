@@ -18,6 +18,7 @@
 - name: "deploy postgres"
   docker_container:
     name: "{{ container_addresses.postgres }}"
+    hostname: "{{ container_addresses.postgres }}"
     image: "postgres:{{ app_versions.postgres }}"
     env:
       POSTGRES_DB: "{{ postgres_default_db }}"
@@ -32,7 +33,10 @@
       - "{{ docker_volumes.postgresdata }}:/var/lib/postgresql/data"
       - "{{ docker_volumes.postgresbackup }}:/var/lib/postgresql/postgresbackup"
       - "{{ postgres_init_location }}:/docker-entrypoint-initdb.d/init.sh"
+      - "{{ certs.postgres.cert_filename }}:{{ postgres_certs_crt_destination }}"
+      - "{{ certs.postgres.private_key_filename }}:{{ postgres_certs_key_destination }}"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
+    command: "postgres -c ssl=on -c ssl_cert_file={{ postgres_certs_crt_destination }} -c ssl_key_file={{ postgres_certs_key_destination }}"

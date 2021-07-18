@@ -1,0 +1,7 @@
+---
+
+- name: "ca"
+  import_tasks: ca.yml
+
+- name: "certs"
+  import_tasks: certs.yml

@@ -8,3 +8,5 @@ synapse_postgres_db: "synapse"
 
 synapse_localpart_template: "{% raw -%}{{ user.name }}{% endraw -%}"
 synapse_display_name_template: "{% raw -%}{{ user.name|capitalize }}{% endraw -%}"
+
+synapse_ca_crt_path: "/ca.crt"

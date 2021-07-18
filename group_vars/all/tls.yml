@@ -1,0 +1,36 @@
+---
+
+certs_dir: "{{ top_level_dir }}/certs"
+ca_key_path: "{{ certs_dir }}/ca_key.pem"
+ca_csr_path: "{{ certs_dir }}/ca.csr"
+ca_crt_path: "{{ certs_dir }}/ca.crt"
+
+certs:
+  openldap:
+    hostname: "{{ container_addresses.openldap }}"
+    private_key_type: ECC
+    private_key_curve: secp384r1
+    private_key_filename: "{{ certs_dir }}/openldap.key"
+    csr_filename: "{{ certs_dir }}/openldap.csr"
+    cert_filename: "{{ certs_dir }}/openldap.crt"
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    extended_key_usage:
+      - serverAuth
+    owner: "{{ user_group.openldapdata.uid }}"
+    group: "{{ user_group.openldapdata.gid }}"
+  postgres:
+    hostname: "{{ container_addresses.postgres }}"
+    private_key_type: RSA
+    private_key_curve: secp384r1
+    private_key_filename: "{{ certs_dir }}/postgres.pem"
+    csr_filename: "{{ certs_dir }}/postgres.csr"
+    cert_filename: "{{ certs_dir }}/postgres.crt"
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    extended_key_usage:
+      - serverAuth
+    owner: "{{ user_group.postgresdata.uid }}"
+    group: "{{ user_group.postgresdata.gid }}"

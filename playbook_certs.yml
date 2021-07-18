@@ -1,0 +1,11 @@
+---
+
+- name: "set up certificates"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | certs"
+      include_role:
+        name: certs

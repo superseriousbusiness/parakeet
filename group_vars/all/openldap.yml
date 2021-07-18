@@ -20,3 +20,8 @@ ldap_readonly_user_dn: "cn={{ ldap_readonly_user }},{{ ldap_base_dn }}"
 
 ldap_admin_user: "admin"
 ldap_admin_user_dn: "cn={{ ldap_admin_user }},{{ ldap_users_dn }}"
+
+openldap_certs_dir: "/certs"
+openldap_certs_crt_destination: "{{ openldap_certs_dir }}/cert.crt"
+openldap_certs_key_destination: "{{ openldap_certs_dir }}/key.pem"
+openldap_certs_ca_crt_destination: "{{ openldap_certs_dir }}/ca.crt"
