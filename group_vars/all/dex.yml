@@ -8,3 +8,5 @@ dex_postgres_db: "dex"
 
 dex_clients:
   synapse: "synapse_client"
+
+dex_ca_crt_path: "/ca.crt"

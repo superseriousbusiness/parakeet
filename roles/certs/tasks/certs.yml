@@ -1,0 +1,39 @@
+---
+
+- name: create host keys
+  openssl_privatekey:
+    path: "{{ path }}"
+    type: "{{ type }}"
+    curve: "{{ curve }}"
+  loop: "{{ certs | dict2items }}"
+  vars:
+    path: "{{ item.value.private_key_filename }}"
+    type: "{{ item.value.private_key_type }}"
+    curve: "{{ item.value.private_key_curve }}"
+
+- name: create csrs
+  openssl_csr:
+    path: "{{ path }}"
+    privatekey_path: "{{ privatekey_path }}"
+    common_name: "{{ hostname }}"
+    key_usage: "{{ key_usage }}"
+    extended_key_usage: "{{ extended_key_usage }}"
+  loop: "{{ certs | dict2items }}"
+  vars:
+    hostname: "{{ item.value.hostname }}"
+    privatekey_path: "{{ item.value.private_key_filename }}"
+    path: "{{ item.value.csr_filename }}"
+    key_usage: "{{ item.value.key_usage }}"
+    extended_key_usage: "{{ item.value.extended_key_usage }}"
+
+- name: sign csrs
+  openssl_certificate:
+    path: "{{ path }}"
+    csr_path: "{{ csr_path }}"
+    provider: ownca
+    ownca_path: "{{ ca_crt_path }}"
+    ownca_privatekey_path: "{{ ca_key_path }}"
+  loop: "{{ certs | dict2items }}"
+  vars:
+    path: "{{ item.value.cert_filename }}"
+    csr_path: "{{ item.value.csr_filename }}"
