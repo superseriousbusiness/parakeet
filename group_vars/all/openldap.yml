@@ -19,4 +19,4 @@ ldap_readonly_user: "ldapreadonly"
 ldap_readonly_user_dn: "cn={{ ldap_readonly_user }},{{ ldap_base_dn }}"
 
 ldap_admin_user: "admin"
-ldap_admin_user_dn: "uid={{ ldap_admin_user }},{{ ldap_users_dn }}"
+ldap_admin_user_dn: "cn={{ ldap_admin_user }},{{ ldap_users_dn }}"

@@ -13,7 +13,7 @@ issuer: https://{{ dex_hostname }}
 storage:
   type: postgres
   config:
-    host: postgres
+    host: "{{ container_addresses.postgres }}"
     port: 5432
     database: "{{ dex_postgres_db }}"
     user: "{{ dex_postgres_user }}"
@@ -58,11 +58,11 @@ web:
 # OAuth2 configuration
 oauth2:
   # use ["code", "token", "id_token"] to enable implicit flow for web-only clients
-  responseTypes: [ "code" ]
+  responseTypes: ["code", "token", "id_token"]
 
   # By default, Dex will ask for approval to share data with application
   # (approval for sharing data from connected IdP to Dex is separate process on IdP)
-  skipApprovalScreen: false
+  skipApprovalScreen: true
 
   # If only one authentication method is enabled, the default behavior is to
   # go directly to it. For connected IdPs, this redirects the browser away
@@ -130,7 +130,7 @@ connectors:
 
     # The attribute to display in the provided password prompt. If unset, will
     # display "Username"
-    usernamePrompt: SSO Username
+    usernamePrompt: Email
 
     # User search maps a username and password entered by a user to a LDAP entry.
     userSearch:
@@ -142,10 +142,10 @@ connectors:
 
       # username attribute used for comparing user entries. This will be translated
       # and combined with the other filter as "(<attr>=<username>)".
-      username: cn
+      username: mail
       # The following three fields are direct mappings of attributes on the user entry.
       # String representation of the user.
-      idAttr: cn
+      idAttr: uid
       # Required. Attribute to map to Email.
       emailAttr: mail
       # Maps to display name of users. No default value.
@@ -155,15 +155,15 @@ connectors:
     groupSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=group)(member=<user uid>))".
-      baseDN: {{ ldap_groups_dn }}
+      baseDN: "{{ ldap_groups_dn }}"
       # Optional filter to apply when searching the directory.
-      filter: "(objectClass=group)"
+      filter: "(objectClass=groupOfNames)"
 
       # Following list contains field pairs that are used to match a user to a group. It adds an additional
       # requirement to the filter that an attribute in the group must match the user's
       # attribute value.
       userMatchers:
-      - userAttr: dn
+      - userAttr: DN
         groupAttr: member
 
       # Represents group name.

@@ -1,11 +1,9 @@
 dn: {{ ldap_admin_user_dn }}
-objectClass: top
 objectClass: person
-objectClass: organizationalPerson
 objectClass: inetOrgPerson
 cn: admin
 displayName: admin
 sn: admin
 uid: admin
 mail: {{ admin_email_address }}
-userpassword: {{ admin_password }}
+userpassword: {{ admin_password_hashed }}
