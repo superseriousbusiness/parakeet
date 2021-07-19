@@ -1,0 +1,40 @@
+---
+
+- name: "create nginx dir"
+  file:
+    path: "{{ nginx_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template nginx config file"
+  template:
+    src: "nginx.conf.j2"
+    dest: "{{ gotosocial_nginx_config_file }}"
+    owner: "{{ user_group.nginx.uid }}"
+    group: "{{ user_group.nginx.gid }}"
+    mode: "600"
+  notify:
+    - "restart gotosocial nginx"
+
+- name: "deploy nginx"
+  docker_container:
+    name: "gotosocial_nginx"
+    image: "nginx:{{ app_versions.nginx }}"
+    networks:
+      - name: "{{ docker_network_names.gotosocial }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ gotosocial_nginx_config_file }}:/etc/nginx/nginx.conf"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.nginx-gotosocial.loadbalancer.server.port: "80"
+      traefik.http.routers.nginx-gotosocial_https.rule: "(Host(`{{ domain }}`) && PathPrefix(`/.well-known/webfinger`)) || (Host(`{{ domain }}`) && PathPrefix(`/.well-known/nodeinfo`))"
+      traefik.http.routers.nginx-gotosocial_https.tls: "true"
+      traefik.http.routers.nginx-gotosocial_https.tls.certresolver: "le"
+      traefik.http.routers.nginx-gotosocial_https.entrypoints: "websecure"
+      traefik.http.routers.nginx-gotosocial_https.service: "nginx-gotosocial"

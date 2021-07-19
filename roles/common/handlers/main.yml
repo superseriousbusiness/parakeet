@@ -15,7 +15,7 @@
     state: "started"
     restart: true
 
-- name: "restart nginx"
+- name: "restart synapse nginx"
   docker_container:
     name: "matrix_nginx"
     state: "started"
@@ -33,9 +33,23 @@
 ########################
 ##### DEX HANDLERS #####
 ########################
-
 - name: "restart dex"
   docker_container:
     name: "dex"
+    state: "started"
+    restart: true
+
+########################
+##### GTS HANDLERS #####
+########################
+- name: "restart gotosocial"
+  docker_container:
+    name: "gotosocial"
+    state: "started"
+    restart: true
+
+- name: "restart gotosocial nginx"
+  docker_container:
+    name: "gotosocial_nginx"
     state: "started"
     restart: true

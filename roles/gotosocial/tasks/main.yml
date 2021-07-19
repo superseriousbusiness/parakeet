@@ -1,0 +1,7 @@
+---
+
+- name: "gotosocial"
+  import_tasks: gotosocial.yml
+
+- name: "nginx"
+  import_tasks: nginx.yml

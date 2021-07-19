@@ -1,0 +1,43 @@
+---
+
+- name: "create gotosocial dir"
+  file:
+    path: "{{ gotosocial_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template gotosocial config"
+  template:
+    src: "config.yaml.j2"
+    dest: "{{ gotosocial_config_file }}"
+    owner: "{{ user_group.gotosocial.uid }}"
+    group: "{{ user_group.gotosocial.gid }}"
+    mode: "600"
+  notify:
+    - "restart gotosocial"
+
+- name: "deploy gotosocial"
+  docker_container:
+    name: "gotosocial"
+    image: "superseriousbusiness/gotosocial:{{ app_versions.gotosocial }}"
+    env:
+      GTS_CONFIG_PATH: "/gotosocial/config.yaml"
+    networks:
+      - name: "{{ docker_network_names.gotosocial }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.gotosocial }}:/gotosocial/storage"
+      - "{{ gotosocial_config_file }}:/gotosocial/config.yaml"
+      - "{{ ca_crt_path }}:{{ gotosocial_ca_cert_path }}"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.gts.loadbalancer.server.port: "8080"
+      traefik.http.routers.gts_https.rule: "Host(`{{ gotosocial_hostname }}`)"
+      traefik.http.routers.gts_https.tls: "true"
+      traefik.http.routers.gts_https.tls.certresolver: "le"
+      traefik.http.routers.gts_https.entrypoints: "websecure"
