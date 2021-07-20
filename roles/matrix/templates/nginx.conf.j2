@@ -9,8 +9,8 @@ http {
             return 200 '{"m.server": "{{ synapse_hostname }}:443"}';
         }
 
-        location /_matrix/static {
-            rewrite ^.*$ https://{{ element_hostname }}? permanent;
+        location /.well-known/matrix/client { 
+            return 200 '{"m.homeserver": {"base_url": "https://{{ synapse_hostname }}"}';
         }
     }
 }

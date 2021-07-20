@@ -10,16 +10,6 @@
   notify:
     - "restart traefik"
 
-- name: "template traefik dynamic config"
-  template:
-    src: "dynamic.toml.j2"
-    dest: "{{ traefik_dynamic_config_destination }}"
-    owner: "root"
-    group: "root"
-    mode: "600"
-  notify:
-    - "restart traefik"
-
 - name: "deploy traefik"
   docker_container:
     name: "traefik"

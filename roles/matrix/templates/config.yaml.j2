@@ -40,7 +40,7 @@ pid_file: /data/homeserver.pid
 # under the 'listeners' configuration, however this is a security risk:
 # https://github.com/matrix-org/synapse#security-note
 #
-web_client_location: https://{{ element_hostname }}/
+# web_client_location: https://{{ element_hostname }}/
 
 # The public-facing base URL that clients use to access this HS
 # (not including _matrix/...). This is the same URL a user would
@@ -180,18 +180,6 @@ public_baseurl: https://{{ synapse_hostname }}/
 #   webclient: A web client. Requires web_client_location to be set.
 #
 listeners:
-  # TLS-enabled listener: for when matrix traffic is sent directly to synapse.
-  #
-  # Disabled by default. To enable it, uncomment the following. (Note that you
-  # will also need to give Synapse a TLS key and certificate: see the TLS section
-  # below.)
-  #
-  #- port: 8448
-  #  type: http
-  #  tls: true
-  #  resources:
-  #    - names: [client, federation]
-
   # Unsecure HTTP listener: for when matrix traffic passes through a reverse proxy
   # that unwraps TLS.
   #
@@ -202,16 +190,9 @@ listeners:
     tls: false
     type: http
     x_forwarded: true
+    bind_addresses: ['0.0.0.0']
     resources:
       - names: [client, federation]
-        compress: false
-
-  - port: 8009
-    tls: false
-    type: http
-    x_forwarded: true
-    resources:
-      - names: [webclient]
         compress: false
 
 # Forward extremities can build up in a room due to networking delays between
@@ -608,27 +589,6 @@ acme:
 #  - lon.example.com
 #  - nyc.example.com
 #  - syd.example.com
-
-# Prevent federation requests from being sent to the following
-# blacklist IP address CIDR ranges. If this option is not specified, or
-# specified with an empty list, no ip range blacklist will be enforced.
-#
-# As of Synapse v1.4.0 this option also affects any outbound requests to identity
-# servers provided by user input.
-#
-# (0.0.0.0 and :: are always blacklisted, whether or not they are explicitly
-# listed here, since they correspond to unroutable addresses.)
-#
-federation_ip_range_blacklist:
-  - '127.0.0.0/8'
-  - '10.0.0.0/8'
-  - '172.16.0.0/12'
-  - '192.168.0.0/16'
-  - '100.64.0.0/10'
-  - '169.254.0.0/16'
-  - '::1/128'
-  - 'fe80::/64'
-  - 'fc00::/7'
 
 # Report prometheus metrics on the age of PDUs being sent to and received from
 # the following domains. This can be used to give an idea of "delay" on inbound

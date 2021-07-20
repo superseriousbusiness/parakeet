@@ -33,7 +33,7 @@
     labels:
       traefik.enable: "true"
       traefik.http.services.nginx-synapse.loadbalancer.server.port: "80"
-      traefik.http.routers.nginx-synapse_https.rule: "(Host(`{{ domain }}`) && PathPrefix(`/.well-known/matrix/server`)) || (Host(`{{ synapse_hostname }}`) && PathPrefix(`/_matrix/static`))"
+      traefik.http.routers.nginx-synapse_https.rule: "(Host(`{{ domain }}`) && PathPrefix(`/.well-known/matrix/server`)) || (Host(`{{ domain }}`) && PathPrefix(`/.well-known/matrix/client`))"
       traefik.http.routers.nginx-synapse_https.tls: "true"
       traefik.http.routers.nginx-synapse_https.tls.certresolver: "le"
       traefik.http.routers.nginx-synapse_https.entrypoints: "websecure"

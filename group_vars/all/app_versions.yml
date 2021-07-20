@@ -8,4 +8,4 @@ app_versions:
     openldap: "1.5.0"
     postgres: "13.3-alpine3.14"
     synapse: "v1.38.0"
-    traefik: "v2.4.9"
+    traefik: "v2.4.11"

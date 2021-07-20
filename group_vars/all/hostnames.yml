@@ -9,3 +9,6 @@ synapse_hostname: "matrix.{{ domain }}"
 
 ####### GOTOSOCIAL #######
 gotosocial_hostname: "gts.{{ domain }}"
+
+####### DEBUG #######
+whoami_hostname: "whoami.{{ domain }}"
