@@ -6,11 +6,11 @@ http {
         server_name {{ domain }};
 
         location /.well-known/webfinger {
-            rewrite ^.*$ https://{{ gotosocial_hostname }}? permanent;
+            rewrite ^.*$ https://{{ gotosocial_hostname }}/.well-known/webfinger permanent;
         }
 
         location /.well-known/nodeinfo {
-            rewrite ^.*$ https://{{ gotosocial_hostname }}? permanent;
+            rewrite ^.*$ https://{{ gotosocial_hostname }}/.well-known/nodeinfo permanent;
         }
     }
 }
