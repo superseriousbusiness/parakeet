@@ -8,7 +8,7 @@ The name derives from parakeet, a curious and talkative bird.
 
 The goal of Parakeet is to provide organizations with an ethical, secure, and user-friendly alternative to existing technology suites from the likes of Google, Microsoft, Slack, Facebook, Discord, Zoom, etc.
 
-Parakeet provides your organization with **video calling**, end-to-end encrypted **chat**, **social networking**, **video hosting**, and **microblogging** capabilities. It's a place where your org members and teammates can gather, coordinate, publish, and engage with a wider community. 
+Parakeet provides your organization with **video calling**, end-to-end encrypted **chat**, **social networking**, **video hosting**, and **microblogging** capabilities. It's a place where your org members and teammates can gather, coordinate, publish, and engage with a wider community.
 
 By integrating various free and open-source software packages, Parakeet keeps your organization's infrastructure costs down, so that you can focus your budget on more important things.
 
@@ -61,6 +61,7 @@ Parakeet itself uses the [MIT License](LICENSE) to cover its aggregation of open
 Individual components aggregated and/or used by Parakeet have separate licenses, listed here:
 
 * Davical, [GPL3](https://www.gnu.org/licenses/gpl-3.0.html)
+* Dex, [Apache 2.0](https://github.com/dexidp/dex/blob/master/LICENSE)
 * Docker Mailserver, [MIT](https://github.com/docker-mailserver/docker-mailserver/blob/master/LICENSE)
 * Docker OpenLDAP, [MIT](https://github.com/osixia/docker-openldap/blob/master/LICENSE)
 * Element, [Apache 2.0](https://github.com/vector-im/element-web/blob/develop/LICENSE)
@@ -68,6 +69,9 @@ Individual components aggregated and/or used by Parakeet have separate licenses,
 * Hugo, [Apache 2.0](https://github.com/gohugoio/hugo/blob/master/LICENSE)
 * Jitsi Meet, [Apache 2.0](https://github.com/jitsi/jitsi-meet/blob/master/LICENSE)
 * Jitsi Videobridge, [Apache 2.0](https://github.com/jitsi/jitsi-videobridge/blob/master/LICENSE)
+* Nginx, [Nginx License](https://nginx.org/LICENSE)
 * OpenLDAP, [OpenLDAP Public License](https://www.openldap.org/software/release/license.html)
+* OpenLDAP Docker, [MIT](https://github.com/osixia/docker-openldap/blob/master/LICENSE)
 * Peertube, [AGPL3](https://github.com/Chocobozzz/PeerTube/blob/develop/LICENSE)
 * Synapse, [Apache 2.0](https://github.com/matrix-org/synapse/blob/develop/LICENSE)
+* Traefik, [MIT](https://github.com/traefik/traefik/blob/master/LICENSE.md)
