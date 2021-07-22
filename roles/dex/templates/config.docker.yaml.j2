@@ -76,6 +76,13 @@ oauth2:
 #
 # Alternatively, clients may be added through the gRPC API.
 staticClients:
+
+  - id: {{ dex_clients.gotosocial }}
+    redirectURIs:
+      - 'https://{{ gotosocial_hostname }}/auth/callback'
+    name: 'GoToSocial'
+    secret: '{{ dex_client_secrets.gotosocial }}'
+
   - id: {{ dex_clients.synapse }}
     redirectURIs:
       - 'https://{{ synapse_hostname }}/_synapse/client/oidc/callback'

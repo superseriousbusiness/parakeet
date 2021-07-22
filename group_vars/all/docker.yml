@@ -3,8 +3,11 @@
 docker_network_names:
     synapse: "synapse"
     dex: "dex"
+    gotosocial: "gotosocial"
+    debug: "debug"
 
 docker_volumes:
+    gotosocial: "gotosocial"
     postgresbackup: "postgresbackup"
     postgresdata: "postgresdata"
     synapse: "synapse"

@@ -1,0 +1,11 @@
+---
+
+- name: "set up gotosocial"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | gotosocial"
+      include_role:
+        name: gotosocial

@@ -1,0 +1,11 @@
+---
+
+- name: "debug"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | debug"
+      include_role:
+        name: debug

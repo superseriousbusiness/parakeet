@@ -4,6 +4,9 @@
 # perform operations within running docker containers
 
 user_group:
+    gotosocial:
+      uid: "1000"
+      gid: "1000"
     nginx:
       uid: "101"
       gid: "101"

@@ -1,0 +1,21 @@
+---
+
+- name: "deploy whoami container"
+  docker_container:
+    name: "whoami"
+    image: "containous/whoami"
+    networks:
+      - name: "{{ docker_network_names.debug }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.whoami.loadbalancer.server.port: "80"
+      traefik.http.routers.whoami_https.rule: "Host(`{{ whoami_hostname }}`)"
+      traefik.http.routers.whoami_https.tls: "true"
+      traefik.http.routers.whoami_https.tls.certresolver: "le"
+      traefik.http.routers.whoami_https.entrypoints: "websecure"
+

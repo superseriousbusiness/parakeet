@@ -10,12 +10,12 @@
 - name: "template nginx config file"
   template:
     src: "nginx.conf.j2"
-    dest: "{{ nginx_config_file }}"
+    dest: "{{ synapse_nginx_config_file }}"
     owner: "{{ user_group.nginx.uid }}"
     group: "{{ user_group.nginx.gid }}"
     mode: "600"
   notify:
-    - "restart nginx"
+    - "restart synapse nginx"
 
 - name: "deploy nginx"
   docker_container:
@@ -27,14 +27,14 @@
     detach: true
     restart_policy: "always"
     volumes:
-      - "{{ nginx_config_file }}:/etc/nginx/nginx.conf"
+      - "{{ synapse_nginx_config_file }}:/etc/nginx/nginx.conf"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     labels:
       traefik.enable: "true"
       traefik.http.services.nginx-synapse.loadbalancer.server.port: "80"
-      traefik.http.routers.nginx_https.rule: "(Host(`{{ domain }}`) && PathPrefix(`/.well-known/matrix/server`)) || (Host(`{{ synapse_hostname }}`) && PathPrefix(`/_matrix/static`))"
-      traefik.http.routers.nginx_https.tls: "true"
-      traefik.http.routers.nginx_https.tls.certresolver: "le"
-      traefik.http.routers.nginx_https.entrypoints: "websecure"
-      traefik.http.routers.nginx_https.service: "nginx-synapse"
+      traefik.http.routers.nginx-synapse_https.rule: "(Host(`{{ domain }}`) && PathPrefix(`/.well-known/matrix/server`)) || (Host(`{{ domain }}`) && PathPrefix(`/.well-known/matrix/client`))"
+      traefik.http.routers.nginx-synapse_https.tls: "true"
+      traefik.http.routers.nginx-synapse_https.tls.certresolver: "le"
+      traefik.http.routers.nginx-synapse_https.entrypoints: "websecure"
+      traefik.http.routers.nginx-synapse_https.service: "nginx-synapse"

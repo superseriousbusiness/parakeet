@@ -6,3 +6,9 @@ dex_hostname: "auth.{{ domain }}"
 ####### MATRIX ########
 element_hostname: "chat.{{ domain }}"
 synapse_hostname: "matrix.{{ domain }}"
+
+####### GOTOSOCIAL #######
+gotosocial_hostname: "gts.{{ domain }}"
+
+####### DEBUG #######
+whoami_hostname: "whoami.{{ domain }}"
