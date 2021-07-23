@@ -1,0 +1,11 @@
+---
+
+- name: "set up peertube"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | peertube"
+      include_role:
+        name: peertube

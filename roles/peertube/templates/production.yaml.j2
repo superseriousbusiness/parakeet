@@ -1,0 +1,104 @@
+listen:
+  hostname: '0.0.0.0'
+  port: 9000
+
+# Correspond to your reverse proxy "listen" configuration
+webserver:
+  https: true
+  hostname: {{ peertube_hostname }}
+  port: 443
+
+rates_limit:
+  login:
+    # 15 attempts in 5 min
+    window: 5 minutes
+    max: 15
+  ask_send_email:
+    # 3 attempts in 5 min
+    window: 5 minutes
+    max: 3
+
+# Proxies to trust to get real client IP
+# If you run PeerTube just behind a local proxy (nginx), keep 'loopback'
+# If you run PeerTube behind a remote proxy, add the proxy IP address (or subnet)
+trust_proxy:
+  - 'loopback'
+  - '{{ docker_ipam_configs.peertube.gateway }}'
+
+# Your database name will be database.name or "peertube"+database.suffix
+database:
+  hostname: 'postgres'
+  port: 5432
+  ssl:
+    ca: '{{ ca_cert_contents.content | b64decode }}'
+  suffix: '{{ peertube_postgres_db_suffix }}'
+  username: '{{ peertube_postgres_user }}'
+  password: '{{ peertube_postgres_password }}'
+
+# Redis server for short time storage
+redis:
+  hostname: '{{ container_addresses.redis }}'
+  port: 6379
+  auth: '{{ redis_password }}'
+
+# From the project root directory
+storage:
+  tmp: '../data/tmp/' # Use to download data (imports etc), store uploaded files before and during processing...
+  avatars: '../data/avatars/'
+  videos: '../data/videos/'
+  streaming_playlists: '../data/streaming-playlists'
+  redundancy: '../data/redundancy/'
+  logs: '../data/logs/'
+  previews: '../data/previews/'
+  thumbnails: '../data/thumbnails/'
+  torrents: '../data/torrents/'
+  captions: '../data/captions/'
+  cache: '../data/cache/'
+  plugins: '../data/plugins/'
+  # Overridable client files : logo.svg, favicon.png and icons/*.png (PWA) in client/dist/assets/images
+  # Could contain for example assets/images/favicon.png
+  # If the file exists, peertube will serve it
+  # If not, peertube will fallback to the default fil
+  client_overrides: '../data/client-overrides/'
+
+log:
+  level: 'info' # 'debug' | 'info' | 'warn' | 'error'
+
+tracker:
+  enabled: true
+  reject_too_many_announces: false # false because we have issues with docker ws ip/port forwarding
+
+admin:
+  email: "{{ admin_email_address }}"
+
+signup:
+  enabled: false
+
+live:
+  enabled: true
+
+  # Limit lives duration
+  # -1 == unlimited
+  max_duration: -1 # For example: '5 hours'
+
+  # Limit max number of live videos created on your instance
+  # -1 == unlimited
+  max_instance_lives: 20
+
+  # Limit max number of live videos created by a user on your instance
+  # -1 == unlimited
+  max_user_lives: 3
+
+  # Allow your users to save a replay of their live
+  # PeerTube will transcode segments in a video file
+  # If the user daily/total quota is reached, PeerTube will stop the live
+  # /!\ transcoding.enabled (and not live.transcoding.enabled) has to be true to create a replay
+  allow_replay: true
+
+  # Your firewall should accept traffic from this port in TCP if you enable live
+  rtmp:
+    port: 1935
+
+  # Allow to transcode the live streaming in multiple live resolutions
+  transcoding:
+    enabled: false

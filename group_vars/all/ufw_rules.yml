@@ -9,3 +9,7 @@ ufw_rules:
   - rule: allow
     port: '443'
     proto: tcp
+# allow peertube streaming connection
+  - rule: allow
+    port: "{{ peertube_rtmp_port }}"
+    proto: tcp
