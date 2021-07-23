@@ -41,3 +41,23 @@
       traefik.tcp.routers.peertube_rtmp.entrypoints: "rtmp"
       traefik.tcp.routers.peertube_rtmp.service: "peertube_rtmp"
       traefik.tcp.routers.peertube_rtmp.tls.certresolver: "le"
+
+- name: "check if peertube oidc plugin has been installed"
+  slurp:
+    src: "/var/lib/docker/volumes/{{ docker_volumes.peertube_data }}/_data/plugins/package.json"
+  register: peertube_package_json_slurp
+  failed_when: false
+
+- name: "parse peertube package json if we were able to slurp it"
+  set_fact:
+    peertube_package_json: "{{ peertube_package_json_slurp.content | b64decode | from_json }}"
+  when: peertube_package_json_slurp.content is defined
+
+- name: "install peertube oidc plugin"
+  shell:
+    cmd: "docker exec peertube 'npm' 'run' 'plugin:install' '-n' '{{ peertube_oidc_npm_name }}' '-v' '{{ app_versions.peertube_oidc }}'"
+  register: oidc_install_output
+  until: "oidc_install_output.rc == 0"
+  when: "peertube_package_json.dependencies[peertube_oidc_npm_name] is not defined"
+  notify:
+    - "restart peertube"

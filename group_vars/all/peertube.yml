@@ -9,3 +9,5 @@ peertube_production_config: "/var/lib/docker/volumes/{{ docker_volumes.peertube_
 peertube_postgres_user: "peertube"
 peertube_postgres_db_suffix: "_prod"
 peertube_postgres_db: "peertube{{ peertube_postgres_db_suffix }}"
+
+peertube_oidc_npm_name: "peertube-plugin-auth-openid-connect"
