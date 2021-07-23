@@ -53,3 +53,12 @@
     name: "gotosocial_nginx"
     state: "started"
     restart: true
+
+##########################
+##### REDIS HANDLERS #####
+##########################
+- name: "restart redis"
+  docker_container:
+    name: "redis"
+    state: "started"
+    restart: true

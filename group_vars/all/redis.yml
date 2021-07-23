@@ -1,0 +1,10 @@
+---
+
+redis_dir: "{{ top_level_dir }}/redis"
+
+redis_certs_crt_destination: "/server.crt"
+redis_certs_key_destination: "/server.pem"
+redis_ca_cert_destination: "/ca.crt"
+
+redis_config_file: "{{ redis_dir }}/redis.conf"
+redis_config_file_destination: "/redis.conf"

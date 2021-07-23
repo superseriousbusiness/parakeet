@@ -1,17 +1,38 @@
 ---
 
 docker_network_names:
-    synapse: "synapse"
+    debug: "debug"
     dex: "dex"
     gotosocial: "gotosocial"
-    debug: "debug"
+    peertube: "peertube"
+    synapse: "synapse"
+
+docker_ipam_configs:
+    debug:
+      subnet: "172.21.0.0/16"
+      gateway: "172.21.0.1"
+    dex:
+      subnet: "172.19.0.0/16"
+      gateway: "172.19.0.1"
+    gotosocial:
+      subnet: "172.20.0.0/16"
+      gateway: "172.20.0.1"
+    peertube:
+      subnet: "172.22.0.0/16"
+      gateway: "172.22.0.1"
+    synapse:
+      subnet: "172.18.0.0/16"
+      gateway: "172.18.0.1"
 
 docker_volumes:
     gotosocial: "gotosocial"
+    openldapdata: "openldapdata"
+    openldapconfig: "openldapconfig"
+    peertube_data: "peertubedata"
+    peertube_config: "peertubeconfig"
     postgresbackup: "postgresbackup"
     postgresdata: "postgresdata"
+    redis: "redis"
     synapse: "synapse"
     traefikconfig: "traefikconfig"
     traefikcerts: "traefikcerts"
-    openldapdata: "openldapdata"
-    openldapconfig: "openldapconfig"

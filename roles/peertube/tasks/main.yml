@@ -1,0 +1,4 @@
+---
+
+- name: "redis"
+  import_tasks: redis.yml

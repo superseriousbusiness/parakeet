@@ -16,6 +16,9 @@ user_group:
     openldapdata:
       uid: "991"
       gid: "991"
+    parakeet:
+      uid: "1001"
+      gid: "1001"
     peertube_data:
       uid: "999"
       gid: "999"
@@ -28,6 +31,9 @@ user_group:
     postgresdata:
       uid: "70"
       gid: "70"
+    redis:
+      uid: "999"
+      gid: "999"
     synapse:
       uid: "991"
       gid: "991"
@@ -37,6 +43,3 @@ user_group:
     traefikcerts:
       uid: "0"
       gid: "0"
-    parakeet:
-      uid: "1001"
-      gid: "1001"
