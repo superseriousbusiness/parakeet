@@ -30,9 +30,6 @@
     volumes:
       - "{{ docker_volumes.redis }}:/data"
       - "{{ redis_config_file }}:{{ redis_config_file_destination }}"
-      - "{{ certs.redis.cert_filename }}:{{ redis_certs_crt_destination }}"
-      - "{{ ca_crt_path }}:{{ redis_ca_cert_destination }}"
-      - "{{ certs.redis.private_key_filename }}:{{ redis_certs_key_destination }}"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     command: "redis-server {{ redis_config_file_destination }}"

@@ -2,3 +2,6 @@
 
 - name: "redis"
   import_tasks: redis.yml
+
+- name: "peertube"
+  import_tasks: peertube.yml

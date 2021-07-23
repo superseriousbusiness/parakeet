@@ -34,17 +34,3 @@ certs:
       - serverAuth
     owner: "{{ user_group.postgresdata.uid }}"
     group: "{{ user_group.postgresdata.gid }}"
-  redis:
-    hostname: "{{ container_addresses.redis }}"
-    private_key_type: RSA
-    private_key_curve: secp384r1
-    private_key_filename: "{{ certs_dir }}/redis.pem"
-    csr_filename: "{{ certs_dir }}/redis.csr"
-    cert_filename: "{{ certs_dir }}/redis.crt"
-    key_usage:
-      - digitalSignature
-      - keyEncipherment
-    extended_key_usage:
-      - serverAuth
-    owner: "{{ user_group.redis.uid }}"
-    group: "{{ user_group.redis.gid }}"

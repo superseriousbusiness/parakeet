@@ -14,6 +14,10 @@
     address = ":443"
     [entryPoints.websecure.forwardedHeaders]
       trustedIPs = ["127.0.0.1/32"]
+  [entrypoints.rtmp]
+    address= ":{{ peertube_rtmp_port }}"
+  [entryPoints.rtmp.forwardedHeaders]
+      trustedIPs = ["127.0.0.1/32"]
 
 [certificatesResolvers.le.acme]
   email = "{{ admin_email_address }}"

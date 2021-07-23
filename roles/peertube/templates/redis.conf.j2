@@ -134,15 +134,15 @@ tcp-keepalive 300
 # directive can be used to define TLS-listening ports. To enable TLS on the
 # default port, use:
 #
-port 0
-tls-port 6379
+# port 0
+# tls-port 6379
 
 # Configure a X.509 certificate and private key to use for authenticating the
 # server to connected clients, masters or cluster peers.  These files should be
 # PEM formatted.
 #
-tls-cert-file "{{ redis_certs_crt_destination }}"
-tls-key-file "{{ redis_certs_key_destination }}"
+# tls-cert-file ""
+# tls-key-file ""
 
 # Configure a DH parameters file to enable Diffie-Hellman (DH) key exchange:
 #
@@ -152,7 +152,7 @@ tls-key-file "{{ redis_certs_key_destination }}"
 # clients and peers.  Redis requires an explicit configuration of at least one
 # of these, and will not implicitly use the system wide configuration.
 #
-tls-ca-cert-file "{{ redis_ca_cert_destination }}"
+# tls-ca-cert-file
 # tls-ca-cert-dir /etc/ssl/certs
 
 # By default, clients (including replica servers) on a TLS port are required
@@ -163,7 +163,7 @@ tls-ca-cert-file "{{ redis_ca_cert_destination }}"
 # valid if provided, but are not required.
 #
 # tls-auth-clients no
-tls-auth-clients optional
+# tls-auth-clients optional
 
 # By default, a Redis replica does not attempt to establish a TLS connection
 # with its master.

@@ -1,0 +1,43 @@
+---
+
+- name: "read ca cert file"
+  slurp:
+    src: "{{ ca_crt_path }}"
+  register: ca_cert_contents
+
+- name: "template prod config file"
+  template:
+    src: "production.yaml.j2"
+    dest: "{{ peertube_production_config }}"
+    owner: "{{ user_group.peertube_data.uid }}"
+    group: "{{ user_group.peertube_data.gid }}"
+  notify:
+    - "restart peertube"
+
+- name: "deploy peertube"
+  docker_container:
+    name: "peertube"
+    image: "chocobozzz/peertube:{{ app_versions.peertube }}"
+    hostname: "peertube"
+    networks:
+      - name: "{{ docker_network_names.peertube }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.peertube_data }}:/data"
+      - "{{ docker_volumes.peertube_config }}:/config"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.peertube-peertube.loadbalancer.server.port: "9000"
+      traefik.http.routers.peertube_https.rule: "Host(`{{ peertube_hostname }}`)"
+      traefik.http.routers.peertube_https.tls: "true"
+      traefik.http.routers.peertube_https.entrypoints: "websecure"
+      traefik.http.routers.peertube_https.tls.certresolver: "le"
+      traefik.tcp.services.peertube_rtmp.loadbalancer.server.port: "{{ peertube_rtmp_port }}"
+      traefik.tcp.routers.peertube_rtmp.rule: "HostSNI(`{{ peertube_hostname }}`)"
+      traefik.tcp.routers.peertube_rtmp.entrypoints: "rtmp"
+      traefik.tcp.routers.peertube_rtmp.service: "peertube_rtmp"
+      traefik.tcp.routers.peertube_rtmp.tls.certresolver: "le"

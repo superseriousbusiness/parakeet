@@ -24,3 +24,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       WITH OWNER={{ gotosocial_postgres_user }};
     GRANT ALL PRIVILEGES ON DATABASE {{ gotosocial_postgres_db }} TO {{ gotosocial_postgres_user }};
 EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER {{ peertube_postgres_user }} WITH PASSWORD '{{ peertube_postgres_password }}';
+    CREATE DATABASE {{ peertube_postgres_db }}
+      WITH OWNER={{ peertube_postgres_user }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ peertube_postgres_db }} TO {{ peertube_postgres_user }};
+EOSQL

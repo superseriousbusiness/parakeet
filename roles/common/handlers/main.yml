@@ -1,6 +1,48 @@
 ---
 
 ########################
+##### DEX HANDLERS #####
+########################
+- name: "restart dex"
+  docker_container:
+    name: "dex"
+    state: "started"
+    restart: true
+
+########################
+##### GTS HANDLERS #####
+########################
+- name: "restart gotosocial"
+  docker_container:
+    name: "gotosocial"
+    state: "started"
+    restart: true
+
+- name: "restart gotosocial nginx"
+  docker_container:
+    name: "gotosocial_nginx"
+    state: "started"
+    restart: true
+
+#########################
+### PEERTUBE HANDLERS ###
+#########################
+- name: "restart peertube"
+  docker_container:
+    name: "peertube"
+    state: "started"
+    restart: true
+
+##########################
+##### REDIS HANDLERS #####
+##########################
+- name: "restart redis"
+  docker_container:
+    name: "redis"
+    state: "started"
+    restart: true
+
+########################
 ### SYNAPSE HANDLERS ###
 ########################
 - name: "restart synapse"
@@ -27,38 +69,5 @@
 - name: "restart traefik"
   docker_container:
     name: "traefik"
-    state: "started"
-    restart: true
-
-########################
-##### DEX HANDLERS #####
-########################
-- name: "restart dex"
-  docker_container:
-    name: "dex"
-    state: "started"
-    restart: true
-
-########################
-##### GTS HANDLERS #####
-########################
-- name: "restart gotosocial"
-  docker_container:
-    name: "gotosocial"
-    state: "started"
-    restart: true
-
-- name: "restart gotosocial nginx"
-  docker_container:
-    name: "gotosocial_nginx"
-    state: "started"
-    restart: true
-
-##########################
-##### REDIS HANDLERS #####
-##########################
-- name: "restart redis"
-  docker_container:
-    name: "redis"
     state: "started"
     restart: true
