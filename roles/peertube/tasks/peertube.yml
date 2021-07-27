@@ -37,10 +37,9 @@
       traefik.http.routers.peertube_https.entrypoints: "websecure"
       traefik.http.routers.peertube_https.tls.certresolver: "le"
       traefik.tcp.services.peertube_rtmp.loadbalancer.server.port: "{{ peertube_rtmp_port }}"
-      traefik.tcp.routers.peertube_rtmp.rule: "HostSNI(`{{ peertube_hostname }}`)"
+      traefik.tcp.routers.peertube_rtmp.rule: "HostSNI(`*`)"
       traefik.tcp.routers.peertube_rtmp.entrypoints: "rtmp"
       traefik.tcp.routers.peertube_rtmp.service: "peertube_rtmp"
-      traefik.tcp.routers.peertube_rtmp.tls.certresolver: "le"
 
 - name: "check if peertube oidc plugin has been installed"
   slurp:
