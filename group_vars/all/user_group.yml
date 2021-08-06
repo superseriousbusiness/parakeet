@@ -4,6 +4,9 @@
 # perform operations within running docker containers
 
 user_group:
+    drone:
+      uid: "1000"
+      gid: "1000"
     gotosocial:
       uid: "1000"
       gid: "1000"

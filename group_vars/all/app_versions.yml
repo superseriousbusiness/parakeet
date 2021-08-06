@@ -2,6 +2,7 @@
 
 app_versions:
     dex: "v2.29.0"
+    drone: "2.0.4"
     element: "v1.7.32"
     gotosocial: "0.1.0-SNAPSHOT"
     nginx: "1.20.1-alpine"

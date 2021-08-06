@@ -1,0 +1,35 @@
+---
+
+- name: "deploy drone"
+  docker_container:
+    name: "drone"
+    image: "drone/drone:{{ app_versions.drone }}"
+    env:
+      DRONE_GITHUB_CLIENT_ID: "{{ drone_github_client_id }}"
+      DRONE_GITHUB_CLIENT_SECRET: "{{ drone_github_client_secret }}"
+      DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
+      DRONE_SERVER_HOST: "{{ drone_hostname }}"
+      DRONE_SERVER_PROTO: "https"
+      DRONE_DATABASE_DRIVER: "postgres"
+      DRONE_DATABASE_DATASOURCE: |-
+        postgres://{{ drone_postgres_user }}:{{ drone_postgres_password }}@{{ container_addresses.postgres }}:5432/{{ drone_postgres_db }}?sslmode=require&sslrootcert={{ drone_ca_crt_path }}
+      DRONE_DATABASE_SECRET: "{{ drone_database_secret }}"
+      DRONE_DATADOG_ENABLED: "false"
+      DRONE_USER_FILTER: "{{ organization }}"
+    networks:
+      - name: "{{ docker_network_names.drone }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.drone }}:/data"
+      - "{{ ca_crt_path }}:{{ drone_ca_crt_path }}"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.drone.loadbalancer.server.port: "80"
+      traefik.http.routers.drone_https.rule: "Host(`{{ drone_hostname }}`)"
+      traefik.http.routers.drone_https.tls: "true"
+      traefik.http.routers.drone_https.tls.certresolver: "le"
+      traefik.http.routers.drone_https.entrypoints: "websecure"
