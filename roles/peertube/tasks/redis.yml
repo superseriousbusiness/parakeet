@@ -1,0 +1,35 @@
+---
+
+- name: "create redis dir"
+  file:
+    path: "{{ redis_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template redis config"
+  template:
+    src: "redis.conf.j2"
+    dest: "{{ redis_config_file }}"
+    owner: "{{ user_group.redis.uid }}"
+    group: "{{ user_group.redis.gid }}"
+    mode: "600"
+  notify:
+    - "restart redis"
+
+- name: "deploy redis"
+  docker_container:
+    name: "{{ container_addresses.redis }}"
+    hostname: "{{ container_addresses.redis }}"
+    image: "redis:{{ app_versions.redis }}"
+    networks:
+      - name: "{{ docker_network_names.peertube }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.redis }}:/data"
+      - "{{ redis_config_file }}:{{ redis_config_file_destination }}"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    command: "redis-server {{ redis_config_file_destination }}"

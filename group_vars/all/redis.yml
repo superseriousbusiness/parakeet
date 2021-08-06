@@ -1,0 +1,6 @@
+---
+
+redis_dir: "{{ top_level_dir }}/redis"
+
+redis_config_file: "{{ redis_dir }}/redis.conf"
+redis_config_file_destination: "/redis.conf"

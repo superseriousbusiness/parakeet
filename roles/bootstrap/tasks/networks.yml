@@ -2,5 +2,10 @@
 
 - name: "create docker networks"
   docker_network:
-    name: "{{ item.value }}"
+    name: "{{ name }}"
+    ipam_config:
+      - "{{ ipam }}"
   loop: "{{ docker_network_names | dict2items }}"
+  vars:
+    name: "{{ item.value }}"
+    ipam: "{{ docker_ipam_configs[name] }}"

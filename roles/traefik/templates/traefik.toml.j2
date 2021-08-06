@@ -14,15 +14,16 @@
     address = ":443"
     [entryPoints.websecure.forwardedHeaders]
       trustedIPs = ["127.0.0.1/32"]
+  [entrypoints.rtmp]
+    address= ":{{ peertube_rtmp_port }}"
+  [entryPoints.rtmp.forwardedHeaders]
+      trustedIPs = ["127.0.0.1/32"]
 
 [certificatesResolvers.le.acme]
   email = "{{ admin_email_address }}"
   storage = "{{ traefik_certs_location }}/acme.json"
   [certificatesResolvers.le.acme.httpChallenge]
     entryPoint = "web"
-
-[providers.file]
-  filename = "/{{ docker_volumes.traefikconfig }}/{{ traefik_dynamic_config_filename }}"
 
 [providers.docker]
   exposedByDefault = false

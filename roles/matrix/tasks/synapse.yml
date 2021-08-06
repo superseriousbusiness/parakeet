@@ -29,7 +29,7 @@
 
 - name: "template synapse config file"
   template:
-    src: "config.yaml.j2"
+    src: "homeserver.yaml.j2"
     dest: "{{ synapse_config_file }}"
     owner: "{{ user_group.synapse.uid }}"
     group: "{{ user_group.synapse.gid }}"
@@ -40,6 +40,7 @@
 - name: "deploy synapse"
   docker_container:
     name: "synapse"
+    hostname: "synapse"
     image: "matrixdotorg/synapse:{{ app_versions.synapse }}"
     networks:
       - name: "{{ docker_network_names.synapse }}"

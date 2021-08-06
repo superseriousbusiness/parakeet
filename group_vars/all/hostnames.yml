@@ -3,6 +3,15 @@
 ####### AUTH #########
 dex_hostname: "auth.{{ domain }}"
 
+####### DEBUG #######
+whoami_hostname: "whoami.{{ domain }}"
+
+####### GOTOSOCIAL #######
+gotosocial_hostname: "gts.{{ domain }}"
+
 ####### MATRIX ########
 element_hostname: "chat.{{ domain }}"
 synapse_hostname: "matrix.{{ domain }}"
+
+####### PEERTUBE #######
+peertube_hostname: "tube.{{ domain }}"
