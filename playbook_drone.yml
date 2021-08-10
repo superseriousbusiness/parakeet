@@ -1,0 +1,11 @@
+---
+
+- name: "set up drone"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | drone"
+      include_role:
+        name: drone

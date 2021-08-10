@@ -31,3 +31,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       WITH OWNER={{ peertube_postgres_user }};
     GRANT ALL PRIVILEGES ON DATABASE {{ peertube_postgres_db }} TO {{ peertube_postgres_user }};
 EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER {{ drone_postgres_user }} WITH PASSWORD '{{ drone_postgres_password }}';
+    CREATE DATABASE {{ drone_postgres_db }}
+      WITH OWNER={{ drone_postgres_user }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ drone_postgres_db }} TO {{ drone_postgres_user }};
+EOSQL

@@ -1,0 +1,6 @@
+---
+
+drone_ca_crt_path: "/ca.crt"
+
+drone_postgres_user: "drone"
+drone_postgres_db: "drone"

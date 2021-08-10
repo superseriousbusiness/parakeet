@@ -3,6 +3,7 @@
 docker_network_names:
     debug: "debug"
     dex: "dex"
+    drone: "drone"
     gotosocial: "gotosocial"
     peertube: "peertube"
     synapse: "synapse"
@@ -14,6 +15,9 @@ docker_ipam_configs:
     dex:
       subnet: "172.19.0.0/16"
       gateway: "172.19.0.1"
+    drone:
+      subnet: "172.23.0.0/16"
+      gateway: "172.23.0.1"
     gotosocial:
       subnet: "172.20.0.0/16"
       gateway: "172.20.0.1"
@@ -25,6 +29,7 @@ docker_ipam_configs:
       gateway: "172.18.0.1"
 
 docker_volumes:
+    drone: "drone"
     gotosocial: "gotosocial"
     openldapdata: "openldapdata"
     openldapconfig: "openldapconfig"

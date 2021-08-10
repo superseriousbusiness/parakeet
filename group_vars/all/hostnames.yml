@@ -6,6 +6,9 @@ dex_hostname: "auth.{{ domain }}"
 ####### DEBUG #######
 whoami_hostname: "whoami.{{ domain }}"
 
+####### DRONE #######
+drone_hostname: "drone.{{ domain }}"
+
 ####### GOTOSOCIAL #######
 gotosocial_hostname: "gts.{{ domain }}"
 
