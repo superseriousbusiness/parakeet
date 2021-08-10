@@ -33,3 +33,21 @@
       traefik.http.routers.drone_https.tls: "true"
       traefik.http.routers.drone_https.tls.certresolver: "le"
       traefik.http.routers.drone_https.entrypoints: "websecure"
+
+- name: "deploy drone runner"
+  docker_container:
+    name: "drone_runner"
+    image: "drone/drone-runner-docker:{{ app_versions.drone_runner }}"
+    env:
+      DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
+      DRONE_RPC_HOST: "{{ drone_hostname }}"
+      DRONE_RPC_PROTO: "https"
+    networks:
+      - name: "{{ docker_network_names.drone }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
