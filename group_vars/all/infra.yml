@@ -3,7 +3,8 @@
 organization: "superseriousbusiness"
 top_level_domain: "org"
 domain: "{{ organization }}.{{ top_level_domain }}"
-admin_email_address: "admin@{{ domain }}"
+admin_name: "admin"
+admin_email_address: "{{ admin_name }}@{{ domain }}"
 top_level_dir: "/opt/parakeet"
 
 default_user: 'parakeet'

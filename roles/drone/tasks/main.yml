@@ -16,6 +16,7 @@
       DRONE_DATABASE_SECRET: "{{ drone_database_secret }}"
       DRONE_DATADOG_ENABLED: "false"
       DRONE_USER_FILTER: "{{ organization }}"
+      DRONE_USER_CREATE: "username:{{ admin_name }},machine:true,admin:true,token:{{ drone_admin_token }}"
     networks:
       - name: "{{ docker_network_names.drone }}"
     purge_networks: yes
