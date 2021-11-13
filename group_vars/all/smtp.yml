@@ -1,0 +1,5 @@
+---
+
+smtp_username: "postmaster@mailgun.superseriousbusiness.org"
+smtp_host: "smtp.eu.mailgun.org"
+smtp_port: "587"

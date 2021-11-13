@@ -364,3 +364,35 @@ oidc:
     - "email"
     - "profile"
     - "groups"
+
+#######################
+##### SMTP CONFIG #####
+#######################
+
+# Config for sending emails via an smtp server. See https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
+smtp:
+
+  # String. The hostname of the smtp server you want to use.
+  # If this is not set, smtp will not be used to send emails, and you can ignore the other settings.
+  # Examples: ["mail.example.org", "localhost"]
+  # Default: ""
+  host: "{{ smtp_host }}"
+  # Int. Port to use to connect to the smtp server.
+  # Examples: []
+  # Default: 0
+  port: {{ smtp_port }}
+  # String. Username to use when authenticating with the smtp server.
+  # This should have been provided to you by your smtp host.
+  # This is often, but not always, an email address.
+  # Examples: ["maillord@example.org"]
+  # Default: ""
+  username: "{{ smtp_username }}"
+  # String. Password to use when authenticating with the smtp server.
+  # This should have been provided to you by your smtp host.
+  # Examples: ["1234", "password"]
+  # Default: ""
+  password: "{{ smtp_password }}"
+  # String. 'From' address for sent emails.
+  # Examples: ["mail@example.org"]
+  # Default: ""
+  from: "{{ admin_email_address }}"
