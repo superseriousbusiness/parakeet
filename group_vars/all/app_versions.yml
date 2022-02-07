@@ -12,5 +12,5 @@ app_versions:
     peertube_oidc: "0.0.5"
     postgres: "13.4-alpine3.14"
     redis: "6.2.5-alpine3.14"
-    synapse: "v1.42.0"
+    synapse: "v1.48.0"
     traefik: "v2.5.2"
