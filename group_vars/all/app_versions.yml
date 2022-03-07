@@ -5,7 +5,7 @@ app_versions:
     drone: "2.9.1"
     drone_runner: "1.8.0"
     element: "v1.8.5"
-    gotosocial: "latest"
+    gotosocial: "0.2.1"
     nginx: "1.20.1-alpine"
     openldap: "1.5.0"
     peertube: "v3.3.0-buster"
