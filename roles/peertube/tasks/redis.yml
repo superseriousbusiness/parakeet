@@ -22,6 +22,7 @@
     name: "{{ container_addresses.redis }}"
     hostname: "{{ container_addresses.redis }}"
     image: "redis:{{ app_versions.redis }}"
+    log_driver: "local"
     networks:
       - name: "{{ docker_network_names.peertube }}"
     purge_networks: yes

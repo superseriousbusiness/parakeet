@@ -20,6 +20,7 @@
     name: "{{ container_addresses.postgres }}"
     hostname: "{{ container_addresses.postgres }}"
     image: "postgres:{{ app_versions.postgres }}"
+    log_driver: "local"
     env:
       POSTGRES_DB: "{{ postgres_default_db }}"
       POSTGRES_USER: "{{ postgres_default_user }}"

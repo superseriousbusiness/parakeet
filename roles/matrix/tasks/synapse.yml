@@ -42,6 +42,7 @@
     name: "synapse"
     hostname: "synapse"
     image: "matrixdotorg/synapse:{{ app_versions.synapse }}"
+    log_driver: "local"
     networks:
       - name: "{{ docker_network_names.synapse }}"
     purge_networks: yes

@@ -18,6 +18,7 @@
   docker_container:
     name: "peertube"
     image: "chocobozzz/peertube:{{ app_versions.peertube }}"
+    log_driver: "local"
     hostname: "peertube"
     networks:
       - name: "{{ docker_network_names.peertube }}"

@@ -21,6 +21,7 @@
   docker_container:
     name: "dex"
     image: "ghcr.io/dexidp/dex:{{ app_versions.dex }}"
+    log_driver: "local"
     networks:
       - name: "{{ docker_network_names.dex }}"
     purge_networks: yes

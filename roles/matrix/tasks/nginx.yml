@@ -21,6 +21,7 @@
   docker_container:
     name: "matrix_nginx"
     image: "nginx:{{ app_versions.nginx }}"
+    log_driver: "local"
     networks:
       - name: "{{ docker_network_names.synapse }}"
     purge_networks: yes

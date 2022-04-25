@@ -13,6 +13,7 @@
   docker_container:
     name: "element"
     image: "vectorim/element-web:{{ app_versions.element }}"
+    log_driver: "local"
     networks:
       - name: "{{ docker_network_names.synapse }}"
     purge_networks: yes

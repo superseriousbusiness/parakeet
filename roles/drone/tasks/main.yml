@@ -4,6 +4,7 @@
   docker_container:
     name: "drone"
     image: "drone/drone:{{ app_versions.drone }}"
+    log_driver: "local"
     env:
       DRONE_GITHUB_CLIENT_ID: "{{ drone_github_client_id }}"
       DRONE_GITHUB_CLIENT_SECRET: "{{ drone_github_client_secret }}"
@@ -39,6 +40,7 @@
   docker_container:
     name: "drone_runner"
     image: "drone/drone-runner-docker:{{ app_versions.drone_runner }}"
+    log_driver: "local"
     env:
       DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
       DRONE_RPC_HOST: "{{ drone_hostname }}"

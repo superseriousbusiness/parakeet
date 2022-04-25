@@ -14,6 +14,7 @@
   docker_container:
     name: "traefik"
     image: "traefik:{{ app_versions.traefik }}"
+    log_driver: "local"
     network_mode: host
     purge_networks: yes
     detach: true

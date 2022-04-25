@@ -11,6 +11,7 @@
   docker_container:
     name: "{{ container_addresses.openldap }}"
     image: "osixia/openldap:{{ app_versions.openldap }}"
+    log_driver: "local"
     hostname: "{{ container_addresses.openldap }}"
     env:
       LDAP_ORGANISATION: "{{ organization }}"
