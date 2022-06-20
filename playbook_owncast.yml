@@ -1,0 +1,11 @@
+---
+
+- name: "set up owncast"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | owncast"
+      include_role:
+        name: owncast

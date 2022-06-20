@@ -1,0 +1,32 @@
+---
+
+- name: "deploy owncast"
+  docker_container:
+    name: "owncast"
+    image: "tsmethurst/owncast:{{ app_versions.owncast }}"
+    log_driver: "local"
+    hostname: "owncast"
+    user: "1000:1000"
+    networks:
+      - name: "{{ docker_network_names.owncast }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.owncastdata }}:/app/data"
+    command:
+    - ./owncast
+    - --enableVerboseLogging
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.owncast-owncast.loadbalancer.server.port: "8080"
+      traefik.http.routers.owncast_https.rule: "Host(`{{ owncast_hostname }}`)"
+      traefik.http.routers.owncast_https.tls: "true"
+      traefik.http.routers.owncast_https.entrypoints: "websecure"
+      traefik.http.routers.owncast_https.tls.certresolver: "le"
+      traefik.tcp.services.owncast_rtmp.loadbalancer.server.port: "{{ peertube_rtmp_port }}"
+      traefik.tcp.routers.owncast_rtmp.rule: "HostSNI(`*`)"
+      traefik.tcp.routers.owncast_rtmp.entrypoints: "rtmp"
+      traefik.tcp.routers.owncast_rtmp.service: "owncast_rtmp"

@@ -14,3 +14,4 @@ app_versions:
     redis: "6.2.5-alpine3.14"
     synapse: "v1.48.0"
     traefik: "v2.5.2"
+    owncast: latest

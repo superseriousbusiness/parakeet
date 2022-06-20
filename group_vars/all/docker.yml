@@ -7,6 +7,7 @@ docker_network_names:
     gotosocial: "gotosocial"
     peertube: "peertube"
     synapse: "synapse"
+    owncast: "owncast"
 
 docker_ipam_configs:
     debug:
@@ -27,6 +28,9 @@ docker_ipam_configs:
     synapse:
       subnet: "172.18.0.0/16"
       gateway: "172.18.0.1"
+    owncast:
+      subnet: "172.24.0.0/16"
+      gateway: "172.24.0.1"
 
 docker_volumes:
     drone: "drone"
@@ -41,3 +45,4 @@ docker_volumes:
     synapse: "synapse"
     traefikconfig: "traefikconfig"
     traefikcerts: "traefikcerts"
+    owncastdata: "owncastdata"
