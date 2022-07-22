@@ -21,6 +21,7 @@
   docker_container:
     name: "gotosocial"
     image: "superseriousbusiness/gotosocial:{{ app_versions.gotosocial }}"
+    pull: true
     log_driver: "local"
     env:
       GTS_CONFIG_PATH: "/gotosocial/config.yaml"
