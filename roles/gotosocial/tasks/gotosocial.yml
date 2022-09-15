@@ -7,6 +7,13 @@
     owner: "{{ default_user }}"
     group: "{{ default_group }}"
 
+- name: "create gotosocial fonts"
+  file:
+    path: "{{ gotosocial_fonts_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
 - name: "template gotosocial config"
   template:
     src: "config.yaml.j2"
@@ -14,8 +21,22 @@
     owner: "{{ user_group.gotosocial.uid }}"
     group: "{{ user_group.gotosocial.gid }}"
     mode: "600"
-  notify:
-    - "restart gotosocial"
+
+- name: "copy gotosocial fonts"
+  copy:
+    src: "Atkinson-Hyperlegible-Bold-102.ttf"
+    dest: "{{ gotosocial_fonts_dir }}/Atkinson-Hyperlegible-Bold-102.ttf"
+    owner: "{{ user_group.gotosocial.uid }}"
+    group: "{{ user_group.gotosocial.gid }}"
+    mode: "600"
+
+- name: "copy gotosocial fonts"
+  copy:
+    src: "Atkinson-Hyperlegible-Regular-102.ttf"
+    dest: "{{ gotosocial_fonts_dir }}/Atkinson-Hyperlegible-Regular-102.ttf"
+    owner: "{{ user_group.gotosocial.uid }}"
+    group: "{{ user_group.gotosocial.gid }}"
+    mode: "600"
 
 - name: "deploy gotosocial"
   docker_container:

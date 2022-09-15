@@ -7,3 +7,4 @@ gotosocial_ca_cert_path: "/ca.crt"
 
 gotosocial_dir: "{{ top_level_dir }}/gotosocial"
 gotosocial_config_file: "{{ gotosocial_dir }}/config.yaml"
+gotosocial_fonts_dir: "{{ gotosocial_dir }}/fonts"
