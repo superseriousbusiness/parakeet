@@ -38,6 +38,14 @@
     group: "{{ user_group.gotosocial.gid }}"
     mode: "600"
 
+- name: "copy gotosocial fonts"
+  copy:
+    src: "Windows-Regular.ttf"
+    dest: "{{ gotosocial_fonts_dir }}/Windows-Regular.ttf"
+    owner: "{{ user_group.gotosocial.uid }}"
+    group: "{{ user_group.gotosocial.gid }}"
+    mode: "600"
+
 - name: "deploy gotosocial"
   docker_container:
     name: "gotosocial"
@@ -53,6 +61,7 @@
     restart_policy: "always"
     volumes:
       - "{{ docker_volumes.gotosocial }}:/gotosocial/storage"
+      - "{{ gotosocial_fonts_dir }}:/gotosocial/web/assets/fonts"
       - "{{ gotosocial_config_file }}:/gotosocial/config.yaml"
       - "{{ ca_crt_path }}:{{ gotosocial_ca_cert_path }}"
     networks_cli_compatible: no
