@@ -43,6 +43,9 @@ user_group:
     mjolnir:
       uid: "991"
       gid: "991"
+    pantalaimon:
+      uid: "991"
+      gid: "991"
     traefikconfig:
       uid: "0"
       gid: "0"

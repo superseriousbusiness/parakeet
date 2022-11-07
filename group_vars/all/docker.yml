@@ -45,5 +45,6 @@ docker_volumes:
     synapse: "synapse"
     traefikconfig: "traefikconfig"
     traefikcerts: "traefikcerts"
-    owncastdata: "owncastdata"
+    # owncastdata: "owncastdata"
     mjolnir: "mjolnir"
+    pantalaimon: "pantalaimon"

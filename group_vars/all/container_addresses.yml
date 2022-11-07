@@ -4,3 +4,4 @@ container_addresses:
   openldap: openldap
   postgres: postgres
   redis: redis
+  pantalaimon: pantalaimon

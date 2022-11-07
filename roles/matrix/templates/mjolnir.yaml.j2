@@ -1,13 +1,13 @@
 # Endpoint URL that Mjolnir uses to interact with the matrix homeserver (client-server API),
 # set this to the pantalaimon URL if you're using that.
-homeserverUrl: "https://{{ synapse_hostname }}"
+homeserverUrl: "http://{{ container_addresses.pantalaimon }}:{{ synapse_pantalaimon_port }}"
 
 # Endpoint URL that Mjolnir could use to fetch events related to reports (client-server API and /_synapse/),
 # only set this to the public-internet homeserver client API URL, do NOT set this to the pantalaimon URL.
 rawHomeserverUrl: "https://{{ synapse_hostname }}"
 
 # Matrix Access Token to use, Mjolnir will only use this if pantalaimon.use is false.
-accessToken: "{{ mjolnir_access_token }}"
+accessToken: "{{ synapse_mjolnir_access_token }}"
 
 # Options related to Pantalaimon (https://github.com/matrix-org/pantalaimon)
 pantalaimon:
@@ -18,15 +18,15 @@ pantalaimon:
   #
   # Mjolnir will log in using the given username and password once,
   # then store the resulting access token in a file under dataPath.
-  use: false
+  use: true
 
   # The username to login with.
-  username: mjolnir
+  username: mjolnir@{{ domain }}
 
   # The password Mjolnir will login with.
   #
   # After successfully logging in once, this will be ignored, so this value can be blanked after first startup.
-  password: your_password
+  password: {{ mjolnir_password }}
 
 # The path Mjolnir will store its state/data in, leave default ("/data/storage") when using containers.
 dataPath: "/data/storage"
@@ -49,7 +49,7 @@ recordIgnoredInvites: false
 #
 # Note: By default, Mjolnir is fairly verbose - expect a lot of messages in this room.
 # (see verboseLogging to adjust this a bit.)
-managementRoom: "{{ mjolnir_management_room }}"
+managementRoom: "{{ synapse_mjolnir_management_room }}"
 
 # Whether Mjolnir should log a lot more messages in the room,
 # mainly involves "all-OK" messages, and debugging messages for when mjolnir checks bans in a room.
@@ -92,7 +92,7 @@ fasterMembershipChecks: false
 # Note: Keep in mind that glob is NOT regex!
 automaticallyRedactForReasons:
   - "spam"
-  - "advertising"
+  - "abuse"
 
 # A list of rooms to protect. Mjolnir will add this to the list it knows from its account data.
 #
@@ -100,7 +100,7 @@ automaticallyRedactForReasons:
 # Manually add the room via '!mjolnir rooms add' to have it stay protected regardless if this config value changes.
 #
 # Note: These must be matrix.to URLs
-protectedRooms: [{{ mjolnir_protected_rooms }}]
+protectedRooms: []
 
 # Whether or not to add all joined rooms to the "protected rooms" list
 # (excluding the management room and watched policy list rooms, see below).
@@ -113,7 +113,7 @@ protectedRooms: [{{ mjolnir_protected_rooms }}]
 #
 # Note: Ban list rooms the bot is watching but didn't create will not be protected.
 # Explicitly add these rooms as a protected room list if you want them protected.
-protectAllJoinedRooms: false
+protectAllJoinedRooms: true
 
 # Increase this delay to have Mjölnir wait longer between two consecutive backgrounded
 # operations. The total duration of operations will be longer, but the homeserver won't

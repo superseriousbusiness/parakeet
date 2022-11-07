@@ -14,5 +14,6 @@ app_versions:
     redis: "6.2.5-alpine3.14"
     synapse: "v1.70.1"
     mjolnir: "v1.5.0"
+    pantalaimon: "0.10.5"
     traefik: "v2.9.4"
     owncast: latest

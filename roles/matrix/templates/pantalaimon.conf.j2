@@ -1,0 +1,11 @@
+[Default]
+LogLevel = Info
+SSL = True
+
+[local-matrix]
+Homeserver = https://{{ synapse_hostname }}
+ListenAddress = 0.0.0.0
+ListenPort = {{ synapse_pantalaimon_port }}
+SSL = False
+UseKeyring = False
+IgnoreVerification = True

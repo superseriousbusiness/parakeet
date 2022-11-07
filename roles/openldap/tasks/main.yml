@@ -58,7 +58,7 @@
 
 - name: "hash mjolnir password"
   shell:
-    cmd: "docker exec openldap 'slappasswd' '-s' '{{ admin_password }}'"
+    cmd: "docker exec openldap 'slappasswd' '-s' '{{ mjolnir_password }}'"
   register: mjolnir_password_hash_output
 
 - name: "template users ldif file"
@@ -87,7 +87,7 @@
     group: "{{ user_group.openldapconfig.gid }}"
     mode: "600"
   vars:
-    admin_password_hashed: "{{ mjolnir_password_hash_output.stdout }}"
+    mjolnir_password_hashed: "{{ mjolnir_password_hash_output.stdout }}"
 
 - name: "template groups ldif file"
   template:

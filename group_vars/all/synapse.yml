@@ -10,3 +10,8 @@ synapse_localpart_template: "{% raw -%}{{ user.name }}{% endraw -%}"
 synapse_display_name_template: "{% raw -%}{{ user.name|capitalize }}{% endraw -%}"
 
 synapse_ca_crt_path: "/ca.crt"
+
+synapse_pantalaimon_port: "8009"
+synapse_pantalaimon_config_file: "/var/lib/docker/volumes/{{ docker_volumes.pantalaimon }}/_data/pantalaimon.conf"
+
+synapse_mjolnir_config_file: "/var/lib/docker/volumes/{{ docker_volumes.mjolnir }}/_data/config/production.yaml"

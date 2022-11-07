@@ -1,0 +1,26 @@
+---
+
+- name: "template pantalaimon config file"
+  template:
+    src: "pantalaimon.conf.j2"
+    dest: "{{ synapse_pantalaimon_config_file }}"
+    owner: "{{ user_group.pantalaimon.uid }}"
+    group: "{{ user_group.pantalaimon.gid }}"
+    mode: "600"
+
+- name: "deploy pantalaimon"
+  docker_container:
+    name: "pantalaimon"
+    hostname: "pantalaimon"
+    image: "pantalaimon"
+    user: "{{ user_group.pantalaimon.uid }}:{{ user_group.pantalaimon.gid }}"
+    log_driver: "local"
+    networks:
+      - name: "{{ docker_network_names.synapse }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.pantalaimon }}:/data"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
