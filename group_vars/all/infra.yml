@@ -5,6 +5,7 @@ top_level_domain: "org"
 domain: "{{ organization }}.{{ top_level_domain }}"
 admin_name: "admin"
 admin_email_address: "{{ admin_name }}@{{ domain }}"
+mjolnir_email_address: "mjolnir@{{ domain }}"
 top_level_dir: "/opt/parakeet"
 
 default_user: 'parakeet'

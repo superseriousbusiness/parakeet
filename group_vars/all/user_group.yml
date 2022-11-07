@@ -40,6 +40,9 @@ user_group:
     synapse:
       uid: "991"
       gid: "991"
+    mjolnir:
+      uid: "991"
+      gid: "991"
     traefikconfig:
       uid: "0"
       gid: "0"

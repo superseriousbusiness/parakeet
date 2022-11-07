@@ -46,3 +46,4 @@ docker_volumes:
     traefikconfig: "traefikconfig"
     traefikcerts: "traefikcerts"
     owncastdata: "owncastdata"
+    mjolnir: "mjolnir"

@@ -4,6 +4,7 @@ openldap_dir: "{{ top_level_dir }}/openldap"
 
 users_ldif_location: "{{ openldap_dir }}/users.ldif"
 admin_ldif_location: "{{ openldap_dir }}/admin.ldif"
+mjolnir_ldif_location: "{{ openldap_dir }}/mjolnir.ldif"
 
 groups_ldif_location: "{{ openldap_dir }}/groups.ldif"
 admin_group_ldif_location: "{{ openldap_dir }}/admin_group.ldif"
@@ -20,6 +21,9 @@ ldap_readonly_user_dn: "cn={{ ldap_readonly_user }},{{ ldap_base_dn }}"
 
 ldap_admin_user: "admin"
 ldap_admin_user_dn: "cn={{ ldap_admin_user }},{{ ldap_users_dn }}"
+
+ldap_mjolnir_user: "mjolnir"
+ldap_mjolnir_user_dn: "cn={{ ldap_mjolnir_user }},{{ ldap_users_dn }}"
 
 openldap_certs_dir: "/certs"
 openldap_certs_crt_destination: "{{ openldap_certs_dir }}/cert.crt"

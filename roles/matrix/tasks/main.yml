@@ -8,3 +8,6 @@
 
 - name: "nginx"
   import_tasks: nginx.yml
+
+- name: "mjolnir"
+  import_tasks: mjolnir.yml

@@ -54,7 +54,12 @@
 - name: "hash admin password"
   shell:
     cmd: "docker exec openldap 'slappasswd' '-s' '{{ admin_password }}'"
-  register: password_hash_output
+  register: admin_password_hash_output
+
+- name: "hash mjolnir password"
+  shell:
+    cmd: "docker exec openldap 'slappasswd' '-s' '{{ admin_password }}'"
+  register: mjolnir_password_hash_output
 
 - name: "template users ldif file"
   template:
@@ -72,7 +77,17 @@
     group: "{{ user_group.openldapconfig.gid }}"
     mode: "600"
   vars:
-    admin_password_hashed: "{{ password_hash_output.stdout }}"
+    admin_password_hashed: "{{ admin_password_hash_output.stdout }}"
+
+- name: "template mjolnir ldif file"
+  template:
+    src: "mjolnir.ldif.j2"
+    dest: "{{ mjolnir_ldif_location }}"
+    owner: "{{ user_group.openldapconfig.uid }}"
+    group: "{{ user_group.openldapconfig.gid }}"
+    mode: "600"
+  vars:
+    admin_password_hashed: "{{ mjolnir_password_hash_output.stdout }}"
 
 - name: "template groups ldif file"
   template:
@@ -103,6 +118,16 @@
 - name: "init admin"
   shell:
     cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/admin.ldif'"
+  register: ldap_add_output
+  until: "ldap_add_output.rc in [ 0, 68 ]"
+  failed_when: "ldap_add_output.rc not in [ 0, 68 ]"
+  changed_when: "ldap_add_output.rc == 0"
+  retries: 10
+  delay: 5
+
+- name: "init mjolnir"
+  shell:
+    cmd: "docker exec openldap 'ldapadd' '-x' '-H' 'ldap://localhost' '-D' '{{ ldap_admin_dn }}' -w '{{ ldap_admin_password }}' '-f' '/ldif/mjolnir.ldif'"
   register: ldap_add_output
   until: "ldap_add_output.rc in [ 0, 68 ]"
   failed_when: "ldap_add_output.rc not in [ 0, 68 ]"

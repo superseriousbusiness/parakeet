@@ -1,0 +1,9 @@
+dn: {{ ldap_mjolnir_user_dn }}
+objectClass: person
+objectClass: inetOrgPerson
+cn: mjolnir
+displayName: mjolnir
+sn: mjolnir
+uid: mjolnir
+mail: {{ mjolnir_email_address }}
+userpassword: {{ mjolnir_password_hashed }}
