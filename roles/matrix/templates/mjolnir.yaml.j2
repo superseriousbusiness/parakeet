@@ -1,6 +1,6 @@
 # Endpoint URL that Mjolnir uses to interact with the matrix homeserver (client-server API),
 # set this to the pantalaimon URL if you're using that.
-homeserverUrl: "http://{{ container_addresses.pantalaimon }}:{{ synapse_pantalaimon_port }}"
+homeserverUrl: "https://{{ synapse_hostname }}"
 
 # Endpoint URL that Mjolnir could use to fetch events related to reports (client-server API and /_synapse/),
 # only set this to the public-internet homeserver client API URL, do NOT set this to the pantalaimon URL.
@@ -18,15 +18,15 @@ pantalaimon:
   #
   # Mjolnir will log in using the given username and password once,
   # then store the resulting access token in a file under dataPath.
-  use: true
+  use: false
 
   # The username to login with.
-  username: mjolnir@{{ domain }}
+  username: nah
 
   # The password Mjolnir will login with.
   #
   # After successfully logging in once, this will be ignored, so this value can be blanked after first startup.
-  password: {{ mjolnir_password }}
+  password: nope
 
 # The path Mjolnir will store its state/data in, leave default ("/data/storage") when using containers.
 dataPath: "/data/storage"

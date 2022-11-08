@@ -9,8 +9,8 @@
 - name: "nginx"
   import_tasks: nginx.yml
 
-- name: "pantalaimon"
-  import_tasks: pantalaimon.yml
+# - name: "pantalaimon"
+#   import_tasks: pantalaimon.yml
 
 - name: "mjolnir"
   import_tasks: mjolnir.yml
