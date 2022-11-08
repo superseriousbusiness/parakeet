@@ -1,0 +1,26 @@
+---
+
+- name: "template mjolnir config file"
+  template:
+    src: "mjolnir.yaml.j2"
+    dest: "{{ synapse_mjolnir_config_file }}"
+    owner: "{{ user_group.mjolnir.uid }}"
+    group: "{{ user_group.mjolnir.gid }}"
+    mode: "600"
+
+- name: "deploy mjolnir"
+  docker_container:
+    name: "mjolnir"
+    hostname: "mjolnir"
+    image: "matrixdotorg/mjolnir:{{ app_versions.mjolnir }}"
+    user: "{{ user_group.mjolnir.uid }}:{{ user_group.mjolnir.gid }}"
+    log_driver: "local"
+    networks:
+      - name: "{{ docker_network_names.synapse }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    volumes:
+      - "{{ docker_volumes.mjolnir }}:/data"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
