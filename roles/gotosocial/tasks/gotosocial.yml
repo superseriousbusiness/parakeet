@@ -59,6 +59,7 @@
     purge_networks: yes
     detach: true
     restart_policy: "always"
+    user: "{{ user_group.gotosocial.uid }}:{{ user_group.gotosocial.gid }}"
     volumes:
       - "{{ docker_volumes.gotosocial }}:/gotosocial/storage"
       - "{{ gotosocial_fonts_dir }}:/gotosocial/web/assets/fonts"
