@@ -14,34 +14,27 @@
     owner: "{{ default_user }}"
     group: "{{ default_group }}"
 
+- name: "copy gotosocial fonts"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ gotosocial_fonts_dir }}/{{ item }}"
+    owner: "{{ user_group.gotosocial.uid }}"
+    group: "{{ user_group.gotosocial.gid }}"
+    mode: "600"
+  loop:
+    - "Atkinson-Hyperlegible-Bold-102.ttf"
+    - "Atkinson-Hyperlegible-Regular-102.ttf"
+    - "noto-sans-v27-latin-700.woff"
+    - "noto-sans-v27-latin-700.woff2"
+    - "noto-sans-v27-latin-regular.woff"
+    - "noto-sans-v27-latin-regular.woff2"
+    - "OFL.txt"
+    - "Windows-Regular.ttf"
+
 - name: "template gotosocial config"
   template:
     src: "config.yaml.j2"
     dest: "{{ gotosocial_config_file }}"
-    owner: "{{ user_group.gotosocial.uid }}"
-    group: "{{ user_group.gotosocial.gid }}"
-    mode: "600"
-
-- name: "copy gotosocial fonts"
-  copy:
-    src: "Atkinson-Hyperlegible-Bold-102.ttf"
-    dest: "{{ gotosocial_fonts_dir }}/Atkinson-Hyperlegible-Bold-102.ttf"
-    owner: "{{ user_group.gotosocial.uid }}"
-    group: "{{ user_group.gotosocial.gid }}"
-    mode: "600"
-
-- name: "copy gotosocial fonts"
-  copy:
-    src: "Atkinson-Hyperlegible-Regular-102.ttf"
-    dest: "{{ gotosocial_fonts_dir }}/Atkinson-Hyperlegible-Regular-102.ttf"
-    owner: "{{ user_group.gotosocial.uid }}"
-    group: "{{ user_group.gotosocial.gid }}"
-    mode: "600"
-
-- name: "copy gotosocial fonts"
-  copy:
-    src: "Windows-Regular.ttf"
-    dest: "{{ gotosocial_fonts_dir }}/Windows-Regular.ttf"
     owner: "{{ user_group.gotosocial.uid }}"
     group: "{{ user_group.gotosocial.gid }}"
     mode: "600"

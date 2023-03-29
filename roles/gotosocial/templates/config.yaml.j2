@@ -488,6 +488,8 @@ storage-local-base-path: "/gotosocial/storage"
 # String. API endpoint of the S3 compatible service.
 # Only required when running with the s3 storage backend.
 # Examples: ["minio:9000", "s3.nl-ams.scw.cloud", "s3.us-west-002.backblazeb2.com"]
+# GoToSocial uses "DNS-style" when accessing buckets. 
+# If you are using Scaleways object storage, please remove the "bucket name" from the endpoint address
 # Default: ""
 storage-s3-endpoint: ""
 
@@ -495,6 +497,7 @@ storage-s3-endpoint: ""
 #
 # Default: false
 storage-s3-proxy: false
+
 # Bool. Use SSL for S3 connections.
 #
 # Only set this to 'false' when testing locally.
