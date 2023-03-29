@@ -23,10 +23,22 @@
 # Default: "info"
 log-level: "info"
 
+# Bool. Log database queries when log-level is set to debug or trace.
+# This setting produces verbose logs, so it's better to only enable it
+# when you're trying to track an issue down.
+# Options: [true, false]
+# Default: false
+log-db-queries: false
+
 # String. Application name to use internally.
 # Examples: ["My Application","gotosocial"]
 # Default: "gotosocial"
 application-name: "gotosocial"
+
+# String. The user that will be shown instead of the landing page. if no user is set, the landing page will be shown.
+# Examples: "admin"
+# Default: ""
+landing-page-user: ""
 
 # String. Hostname that this server will be reachable at. Defaults to localhost for local testing,
 # but you should *definitely* change this when running for real, or your server won't work at all.
@@ -38,11 +50,18 @@ host: "{{ gotosocial_hostname }}"
 # String. Domain to use when federating profiles. This is useful when you want your server to be at
 # eg., "gts.example.org", but you want the domain on accounts to be "example.org" because it looks better
 # or is just shorter/easier to remember.
+#
 # To make this setting work properly, you need to redirect requests at "example.org/.well-known/webfinger"
 # to "gts.example.org/.well-known/webfinger" so that GtS can handle them properly.
+#
 # You should also redirect requests at "example.org/.well-known/nodeinfo" in the same way.
 # An empty string (ie., not set) means that the same value as 'host' will be used.
+#
 # DO NOT change this after your server has already run once, or you will break things!
+#
+# Please read the appropriate section of the installation guide before you go messing around with this setting:
+# https://docs.gotosocial.org/installation_guide/advanced/#can-i-host-my-instance-at-fediexampleorg-but-have-just-exampleorg-in-my-username
+#
 # Examples: ["example.org","server.com"]
 # Default: ""
 account-domain: "{{ domain }}"
@@ -94,8 +113,18 @@ trusted-proxies:
 db-type: "postgres"
 
 # String. Database address or parameters.
-# Examples: ["localhost","my.db.host","127.0.0.1","192.111.39.110",":memory:"]
-# Default: "localhost"
+#
+# For Postgres, this should be the address or socket at which the database can be reached.
+#
+# For Sqlite, this should be the path to your sqlite database file. Eg., /opt/gotosocial/sqlite.db.
+# If the file doesn't exist at the specified path, it will be created.
+# If just a filename is provided (no directory) then the database will be created in the same directory
+# as the GoToSocial binary.
+# If address is set to :memory: then an in-memory database will be used (no file).
+# WARNING: :memory: should NOT BE USED except for testing purposes.
+#
+# Examples: ["localhost","my.db.host","127.0.0.1","192.111.39.110",":memory:", "sqlite.db"]
+# Default: ""
 db-address: "{{ container_addresses.postgres }}"
 
 # Int. Port for database connection.
@@ -108,10 +137,9 @@ db-port: 5432
 # Default: "postgres"
 db-user: "{{ gotosocial_postgres_user }}"
 
-# REQUIRED
 # String. Password to use for the database connection
 # Examples: ["password123","verysafepassword","postgres"]
-# Default: "postgres"
+# Default: ""
 db-password: "{{ gotosocial_postgres_password }}"
 
 # String. Name of the database to use within the provided database type.
@@ -133,6 +161,157 @@ db-tls-mode: "require"
 # Examples: ["/path/to/some/cert.crt"]
 # Default: ""
 db-tls-ca-cert: "{{ gotosocial_ca_cert_path }}"
+
+# Int. Number to multiply by CPU count to set permitted total of open database connections (in-use and idle).
+# You can use this setting to tune your database connection behavior, though most admins won't need to touch it.
+#
+# Example values for multiplier 8:
+#
+# 1 cpu = 08 open connections
+# 2 cpu = 16 open connections
+# 4 cpu = 32 open connections
+#
+# Example values for multiplier 4:
+#
+# 1 cpu = 04 open connections
+# 2 cpu = 08 open connections
+# 4 cpu = 16 open connections
+#
+# A multiplier of 8 is a sensible default, but you may wish to increase this for instances
+# running on very performant hardware, or decrease it for instances using v. slow CPUs.
+#
+# If you set the multiplier to less than 1, only one open connection will be used regardless of cpu count.
+#
+# PLEASE NOTE!!: This setting currently only applies for Postgres. SQLite will always use 1 connection regardless
+# of what is set here. This behavior will change in future when we implement better SQLITE_BUSY handling.
+# See https://github.com/superseriousbusiness/gotosocial/issues/1407 for more details.
+#
+# Examples: [16, 8, 10, 2]
+# Default: 8
+db-max-open-conns-multiplier: 8
+
+# String. SQLite journaling mode.
+# SQLite only -- unused otherwise.
+# If set to empty string, the sqlite default will be used.
+# See: https://www.sqlite.org/pragma.html#pragma_journal_mode
+# Examples: ["DELETE", "TRUNCATE", "PERSIST", "MEMORY", "WAL", "OFF"]
+# Default: "WAL"
+db-sqlite-journal-mode: "WAL"
+
+# String. SQLite synchronous mode.
+# SQLite only -- unused otherwise.
+# If set to empty string, the sqlite default will be used.
+# See: https://www.sqlite.org/pragma.html#pragma_synchronous
+# Examples: ["OFF", "NORMAL", "FULL", "EXTRA"]
+# Default: "NORMAL"
+db-sqlite-synchronous: "NORMAL"
+
+# Byte size. SQlite cache size.
+# SQLite only -- unused otherwise.
+# If set to empty string or zero, the sqlite default (2MiB) will be used.
+# See: https://www.sqlite.org/pragma.html#pragma_cache_size
+# Examples: ["0", "2MiB", "8MiB", "64MiB"]
+# Default: "8MiB"
+db-sqlite-cache-size: "8MiB"
+
+# Duration. SQlite busy timeout.
+# SQLite only -- unused otherwise.
+# If set to empty string or zero, the sqlite default will be used.
+# See: https://www.sqlite.org/pragma.html#pragma_busy_timeout
+# Examples: ["0s", "1s", "30s", "1m", "5m"]
+# Default: "5s"
+db-sqlite-busy-timeout: "5m"
+
+cache:
+  # Cache configuration options:
+  #
+  # max-size   = maximum cached objects count
+  # ttl        = cached object lifetime
+  # sweep-freq = frequency to look for stale cache objects
+  #              (zero will disable cache sweeping)
+
+  #############################
+  #### VISIBILITY CACHES ######
+  #############################
+  #
+  # Configure Status and account 
+  # visibility cache.
+
+  visibility-max-size: 2000
+  visibility-ttl: "30m"
+  visibility-sweep-freq: "1m"
+
+  gts:
+    ###########################
+    #### DATABASE CACHES ######
+    ###########################
+    #
+    # Configure GTS database
+    # model caches.
+
+    account-max-size: 2000
+    account-ttl: "30m"
+    account-sweep-freq: "1m"
+
+    block-max-size: 100
+    block-ttl: "30m"
+    block-sweep-freq: "1m"
+
+    domain-block-max-size: 2000
+    domain-block-ttl: "24h"
+    domain-block-sweep-freq: "1m"
+
+    emoji-max-size: 2000
+    emoji-ttl: "30m"
+    emoji-sweep-freq: "1m"
+
+    emoji-category-max-size: 100
+    emoji-category-ttl: "30m"
+    emoji-category-sweep-freq: "1m"
+
+    follow-max-size: 2000
+    follow-ttl: "30m"
+    follow-sweep-freq: "1m"
+
+    follow-request-max-size: 2000
+    follow-request-ttl: "30m"
+    follow-request-sweep-freq: "1m"
+
+    media-max-size: 1000
+    media-ttl: "30m"
+    media-sweep-freq: "1m"
+
+    mention-max-size: 2000
+    mention-ttl: "30m"
+    mention-sweep-freq: "1m"
+
+    notification-max-size: 1000
+    notification-ttl: "30m"
+    notification-sweep-freq: "1m"
+
+    report-max-size: 100
+    report-ttl: "30m"
+    report-sweep-freq: "1m"
+
+    status-max-size: 2000
+    status-ttl: "30m"
+    status-sweep-freq: "1m"
+
+    status-fave-max-size: 2000
+    status-fave-ttl: "30m"
+    status-fave-sweep-freq: "1m"
+
+    tombstone-max-size: 500
+    tombstone-ttl: "30m"
+    tombstone-sweep-freq: "1m"
+
+    user-max-size: 500
+    user-ttl: "30m"
+    user-sweep-freq: "1m"
+
+    webfinger-max-size": 250
+    webfinger-ttl: "24h"
+    webfinger-sweep-freq": "1m"
 
 ######################
 ##### WEB CONFIG #####
@@ -170,6 +349,19 @@ instance-expose-peers: true
 # Options: [true, false]
 # Default: false
 instance-expose-suspended: false
+
+# Bool. Allow unauthenticated users to view /about/suspended,
+# showing the HTML rendered list of instances that this instance blocks/suspends.
+# Options: [true, false]
+# Default: false
+instance-expose-suspended-web: false
+
+# Bool. Allow unauthenticated users to make queries to /api/v1/timelines/public in order
+# to see a list of public posts on this server. Even if set to 'false', then authenticated
+# users (members of the instance) will still be able to query the endpoint.
+# Options: [true, false]
+# Default: false
+instance-expose-public-timeline: false
 
 # Bool. This flag tweaks whether GoToSocial will deliver ActivityPub messages
 # to the shared inbox of a recipient, if one is available, instead of delivering
@@ -256,7 +448,7 @@ media-description-max-chars: 500
 # If this is set to 0, then media from remote instances will be cached indefinitely.
 # Examples: [30, 60, 7, 0]
 # Default: 30
-media-remote-cache-days: 3
+media-remote-cache-days: 5
 
 # Int. Max size in bytes of emojis uploaded to this instance via the admin API.
 # The default is the same as the Mastodon size limit for emojis (50kb), which allows
@@ -283,35 +475,58 @@ media-emoji-remote-max-size: 102400
 # String. Type of storage backend to use.
 # Examples: ["local", "s3"]
 # Default: "local" (storage on local disk)
-# NOTE: s3 storage is not yet supported!
 storage-backend: "local"
 
 # String. Directory to use as a base path for storing files.
 # Make sure whatever user/group gotosocial is running as has permission to access
-# this directly, and create new subdirectories and files with in.
+# this directory, and create new subdirectories and files within it.
+# Only required when running with the local storage backend.
 # Examples: ["/home/gotosocial/storage", "/opt/gotosocial/datastorage"]
 # Default: "/gotosocial/storage"
-storage-base-path: "/gotosocial/storage"
+storage-local-base-path: "/gotosocial/storage"
 
-# String. Protocol to use for serving stored files.
-# It's very unlikely that you'll need to change this ever, but there might be edge cases.
-# Examples: ["http", "https"]
-storage-serve-protocol: "https"
+# String. API endpoint of the S3 compatible service.
+# Only required when running with the s3 storage backend.
+# Examples: ["minio:9000", "s3.nl-ams.scw.cloud", "s3.us-west-002.backblazeb2.com"]
+# Default: ""
+storage-s3-endpoint: ""
 
-# String. Host for serving stored files.
-# If you're using local storage, this should be THE SAME as the value you've set for Host, above.
-# It should only be a different value if you're serving stored files from a host
-# other than the one your instance is running on.
-# Examples: ["localhost", "example.org"]
-# Default: "localhost" -- you should absolutely change this.
-storage-serve-host: "{{ gotosocial_hostname }}"
+# Bool. If data stored in S3 should be proxied through GoToSocial instead of redirecting to a presigned URL.
+#
+# Default: false
+storage-s3-proxy: false
+# Bool. Use SSL for S3 connections.
+#
+# Only set this to 'false' when testing locally.
+#
+# Default: true
+storage-s3-use-ssl: true
 
-# String. Base path for serving stored files. This will be added to serveHost and serveProtocol
-# to form the prefix url of your stored files. Eg., https://example.org/fileserver/.....
-# It's unlikely that you will need to change this.
-# Examples: ["/fileserver", "/media"]
-# Default: "/fileserver"
-storage-serve-base-path: "/fileserver"
+# String. Access key part of the S3 credentials.
+# Consider setting this value using environment variables to avoid leaking it via the config file
+# Only required when running with the s3 storage backend.
+# Examples: ["AKIAJSIE27KKMHXI3BJQ","miniouser"]
+# Default: ""
+storage-s3-access-key: ""
+
+# String. Secret key part of the S3 credentials.
+# Consider setting this value using environment variables to avoid leaking it via the config file
+# Only required when running with the s3 storage backend.
+# Examples: ["5bEYu26084qjSFyclM/f2pz4gviSfoOg+mFwBH39","miniopassword"]
+# Default: ""
+storage-s3-secret-key: ""
+
+# String. Name of the storage bucket.
+#
+# If you have already encoded your bucket name in the storage-s3-endpoint, this
+# value will be used as a directory containing your data.
+#
+# The bucket must exist prior to starting GoToSocial
+#
+# Only required when running with the s3 storage backend.
+# Examples: ["gts","cool-instance"]
+# Default: ""
+storage-s3-bucket: ""
 
 ###########################
 ##### STATUSES CONFIG #####
@@ -386,6 +601,22 @@ letsencrypt-cert-dir: "/gotosocial/storage/certs"
 # Default: ""
 letsencrypt-email-address: ""
 
+##############################
+##### MANUAL TLS CONFIG  #####
+##############################
+
+# String. Path to a PEM-encoded file on disk that includes the certificate chain 
+# and the public key
+# Examples: ["/gotosocial/storage/certs/chain.pem"]
+# Default: ""
+tls-certificate-chain: ""
+
+# String. Path to a PEM-encoded file on disk containing the private key for the
+# associated tls-certificate-chain
+# Examples: ["/gotosocial/storage/certs/private.pem"]
+# Default: ""
+tls-certificate-key: ""
+
 #######################
 ##### OIDC CONFIG #####
 #######################
@@ -440,6 +671,13 @@ oidc-scopes:
   - "profile"
   - "groups"
 
+# Bool. Link OIDC authenticated users to existing ones based on their email address.
+# This is mostly intended for migration purposes if you were running previous versions of GTS
+# which only correlated users with their email address. Should be set to false for most usecases.
+# Options: [true, false]
+# Default: false
+oidc-link-existing: false
+
 #######################
 ##### SMTP CONFIG #####
 #######################
@@ -475,6 +713,18 @@ smtp-password: "{{ smtp_password }}"
 # Default: ""
 smtp-from: "{{ admin_email_address }}"
 
+# Bool. If true, when an email is sent that has multiple recipients, each recipient
+# will be included in the To field, so that each recipient can see who else got the
+# email, and they can 'reply all' to the other recipients if they want to.
+#
+# If false, email will be sent to Undisclosed Recipients, and each recipient will not
+# be able to see who else received the email.
+#
+# It might be useful to change this setting to 'true' if you want to be able to discuss
+# new moderation reports with other admins by 'replying-all' to the notification email.
+# Default: false
+smtp-disclose-recipients: false
+
 #########################
 ##### SYSLOG CONFIG #####
 #########################
@@ -499,6 +749,15 @@ syslog-protocol: "udp"
 # String. Address:port to send syslog logs to. Leave empty to connect to local syslog.
 # Default: "localhost:514"
 syslog-address: "localhost:514"
+
+##################################
+##### OBSERVABILITY SETTINGS #####
+##################################
+
+# String. Header name to use to extract a request or trace ID from. Typically set by a
+# loadbalancer or proxy.
+# Default: "X-Request-Id"
+request-id-header: "X-Request-Id"
 
 #############################
 ##### ADVANCED SETTINGS #####
@@ -526,3 +785,54 @@ syslog-address: "localhost:514"
 # Options: ["lax", "strict"]
 # Default: "lax"
 advanced-cookies-samesite: "lax"
+
+# Int. Amount of requests to permit per router grouping from a single IP address within
+# a span of 5 minutes. If this amount is exceeded, a 429 HTTP error code will be returned.
+#
+# If you find yourself adjusting this limit because it's regularly being exceeded,
+# you should first verify that your settings for `trusted-proxies` (above) are correct.
+# In many cases, when the rate limit is exceeded it is because your instance sees all
+# incoming requests as coming from the *same IP address* (you can verify this by looking
+# at the client IPs in your instance logs). If this is the case, try adding that IP
+# address to your `trusted-proxies` *BEFORE* you go adjusting this rate limit setting!
+#
+# If you set this to 0 or less, rate limiting will be disabled entirely.
+#
+# Examples: [1000, 500, 0]
+# Default: 300
+advanced-rate-limit-requests: 300
+
+# Int. Amount of open requests to permit per CPU, per router grouping, before applying http
+# request throttling. Any requests beyond the calculated limit are held in a backlog queue for
+# up to 30 seconds before either being processed or timing out. Requests that don't fit in the backlog
+# queue will have status 503 returned to them, and the header 'Retry-After' will be set to 30 seconds.
+#
+# Open request limit is available CPUs * multiplier; backlog queue limit is limit * multiplier.
+#
+# Example values for multiplier 8:
+#
+# 1 cpu = 08 open, 064 backlog
+# 2 cpu = 16 open, 128 backlog
+# 4 cpu = 32 open, 256 backlog
+#
+# Example values for multiplier 4:
+#
+# 1 cpu = 04 open, 016 backlog
+# 2 cpu = 08 open, 032 backlog
+# 4 cpu = 16 open, 064 backlog
+#
+# A multiplier of 8 is a sensible default, but you may wish to increase this for instances
+# running on very performant hardware, or decrease it for instances using v. slow CPUs.
+#
+# If you set this to 0 or less, http request throttling will be disabled entirely.
+#
+# Examples: [8, 4, 9, 0]
+# Default: 8
+advanced-throttling-multiplier: 8
+
+# Duration. Time period to use as the "retry-after" header value in response to throttled requests.
+# Minimum resolution is 1 second.
+#
+# Examples: [30s, 10s, 5s, 1m]
+# Default: 30s
+advanced-throttling-retry-after: "5s"
