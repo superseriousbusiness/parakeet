@@ -1,5 +1,5 @@
 #  GoToSocial
-#  Copyright (C) 2021 GoToSocial Authors admin@gotosocial.org
+#  Copyright (C) 2021-2023 GoToSocial Authors admin@gotosocial.org
 
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,11 @@ log-level: "info"
 # Default: false
 log-db-queries: false
 
+# Bool. Include the client IP in the emitted log lines
+# Options: [true, false]
+# Default: true
+log-client-ip: true
+
 # String. Application name to use internally.
 # Examples: ["My Application","gotosocial"]
 # Default: "gotosocial"
@@ -55,6 +60,11 @@ host: "{{ gotosocial_hostname }}"
 # to "gts.example.org/.well-known/webfinger" so that GtS can handle them properly.
 #
 # You should also redirect requests at "example.org/.well-known/nodeinfo" in the same way.
+#
+# You should also redirect requests at "example.org/.well-known/host-meta" in the same way. This endpoint
+# is used by a number of clients to discover the API endpoint to use when the host and account domain are
+# different.
+#
 # An empty string (ie., not set) means that the same value as 'host' will be used.
 #
 # DO NOT change this after your server has already run once, or you will break things!
@@ -76,9 +86,11 @@ protocol: "https"
 
 # String. Address to bind the GoToSocial server to.
 # This can be an IPv4 address or an IPv6 address (surrounded in square brackets), or a hostname.
-# Default value will bind to all interfaces.
-# You probably won't need to change this unless you're setting GoToSocial up in some fancy way or
-# you have specific networking requirements.
+# The default value will bind to all interfaces, which makes the server
+# accessible by other machines. For most setups there is no need to change this.
+# If you are using GoToSocial in a reverse proxy setup with the proxy running on
+# the same machine, you will want to set this to "localhost" or an equivalent,
+# so that the proxy can't be bypassed.
 # Examples: ["0.0.0.0", "172.128.0.16", "localhost", "[::]", "[2001:db8::fed1]"]
 # Default: "0.0.0.0"
 bind-address: "0.0.0.0"
@@ -96,7 +108,7 @@ port: 8080
 # If you're running inside a Docker container behind Traefik or Nginx, for example, add the subnet of your docker network,
 # or the gateway of the docker network, and/or the address of the reverse proxy (if it's not running on the host network).
 # Example: ["127.0.0.1/32", "172.20.0.1"]
-# Default: ["127.0.0.1/32"] (localhost)
+# Default: ["127.0.0.1/32", "::1"] (localhost ipv4 + ipv6)
 trusted-proxies:
   - "127.0.0.1/32"
   - "{{ docker_ipam_configs.gotosocial.gateway }}"
@@ -134,7 +146,7 @@ db-port: 5432
 
 # String. Username for the database connection.
 # Examples: ["mydbuser","postgres","gotosocial"]
-# Default: "postgres"
+# Default: ""
 db-user: "{{ gotosocial_postgres_user }}"
 
 # String. Password to use for the database connection
@@ -144,7 +156,7 @@ db-password: "{{ gotosocial_postgres_password }}"
 
 # String. Name of the database to use within the provided database type.
 # Examples: ["mydb","postgres","gotosocial"]
-# Default: "postgres"
+# Default: "gotosocial"
 db-database: "{{ gotosocial_postgres_db }}"
 
 # String. Disable, enable, or require SSL/TLS connection to the database.
@@ -182,10 +194,6 @@ db-tls-ca-cert: "{{ gotosocial_ca_cert_path }}"
 #
 # If you set the multiplier to less than 1, only one open connection will be used regardless of cpu count.
 #
-# PLEASE NOTE!!: This setting currently only applies for Postgres. SQLite will always use 1 connection regardless
-# of what is set here. This behavior will change in future when we implement better SQLITE_BUSY handling.
-# See https://github.com/superseriousbusiness/gotosocial/issues/1407 for more details.
-#
 # Examples: [16, 8, 10, 2]
 # Default: 8
 db-max-open-conns-multiplier: 8
@@ -219,99 +227,17 @@ db-sqlite-cache-size: "8MiB"
 # If set to empty string or zero, the sqlite default will be used.
 # See: https://www.sqlite.org/pragma.html#pragma_busy_timeout
 # Examples: ["0s", "1s", "30s", "1m", "5m"]
-# Default: "5s"
-db-sqlite-busy-timeout: "5m"
+# Default: "30m"
+db-sqlite-busy-timeout: "30m"
 
 cache:
-  # Cache configuration options:
-  #
-  # max-size   = maximum cached objects count
-  # ttl        = cached object lifetime
-  # sweep-freq = frequency to look for stale cache objects
-  #              (zero will disable cache sweeping)
-
-  #############################
-  #### VISIBILITY CACHES ######
-  #############################
-  #
-  # Configure Status and account 
-  # visibility cache.
-
-  visibility-max-size: 2000
-  visibility-ttl: "30m"
-  visibility-sweep-freq: "1m"
-
-  gts:
-    ###########################
-    #### DATABASE CACHES ######
-    ###########################
-    #
-    # Configure GTS database
-    # model caches.
-
-    account-max-size: 2000
-    account-ttl: "30m"
-    account-sweep-freq: "1m"
-
-    block-max-size: 100
-    block-ttl: "30m"
-    block-sweep-freq: "1m"
-
-    domain-block-max-size: 2000
-    domain-block-ttl: "24h"
-    domain-block-sweep-freq: "1m"
-
-    emoji-max-size: 2000
-    emoji-ttl: "30m"
-    emoji-sweep-freq: "1m"
-
-    emoji-category-max-size: 100
-    emoji-category-ttl: "30m"
-    emoji-category-sweep-freq: "1m"
-
-    follow-max-size: 2000
-    follow-ttl: "30m"
-    follow-sweep-freq: "1m"
-
-    follow-request-max-size: 2000
-    follow-request-ttl: "30m"
-    follow-request-sweep-freq: "1m"
-
-    media-max-size: 1000
-    media-ttl: "30m"
-    media-sweep-freq: "1m"
-
-    mention-max-size: 2000
-    mention-ttl: "30m"
-    mention-sweep-freq: "1m"
-
-    notification-max-size: 1000
-    notification-ttl: "30m"
-    notification-sweep-freq: "1m"
-
-    report-max-size: 100
-    report-ttl: "30m"
-    report-sweep-freq: "1m"
-
-    status-max-size: 2000
-    status-ttl: "30m"
-    status-sweep-freq: "1m"
-
-    status-fave-max-size: 2000
-    status-fave-ttl: "30m"
-    status-fave-sweep-freq: "1m"
-
-    tombstone-max-size: 500
-    tombstone-ttl: "30m"
-    tombstone-sweep-freq: "1m"
-
-    user-max-size: 500
-    user-ttl: "30m"
-    user-sweep-freq: "1m"
-
-    webfinger-max-size": 250
-    webfinger-ttl: "24h"
-    webfinger-sweep-freq": "1m"
+  # cache.memory-target sets a target limit that
+  # the application will try to keep it's caches
+  # within. This is based on estimated sizes of
+  # in-memory objects, and so NOT AT ALL EXACT.
+  # Examples: ["100MiB", "200MiB", "500MiB", "1GiB"]
+  # Default: "200MiB"
+  memory-target: "1GiB"
 
 ######################
 ##### WEB CONFIG #####
@@ -376,6 +302,15 @@ instance-expose-public-timeline: false
 # Default: true
 instance-deliver-to-shared-inboxes: true
 
+# Bool. This flag will inject a Mastodon version into the version field that
+# is included in /api/v1/instance. This version is often used by Mastodon clients
+# to do API feature detection. By injecting a Mastodon compatible version, it is
+# possible to cajole those clients to behave correctly with GoToSocial.
+#
+# Options: [true, false]
+# Default: false
+instance-inject-mastodon-version: false
+
 ###########################
 ##### ACCOUNTS CONFIG #####
 ###########################
@@ -413,11 +348,18 @@ accounts-reason-required: true
 # Default: false
 accounts-allow-custom-css: true
 
+# Int. If accounts-allow-custom-css is true, this is the permitted length in characters for
+# CSS uploaded by accounts on this instance. No effect if accounts-allow-custom-css is false.
+#
+# Examples: [500, 5000, 9999]
+# Default: 10000
+accounts-custom-css-length: 10000
+
 ########################
 ##### MEDIA CONFIG #####
 ########################
 
-# Config pertaining to user media uploads (videos, image, image descriptions).
+# Config pertaining to media uploads (videos, image, image descriptions, emoji).
 
 # Int. Maximum allowed image upload size in bytes.
 # Examples: [2097152, 10485760]
@@ -437,7 +379,7 @@ media-description-min-chars: 0
 # Int. Maximum amount of characters permitted in an image or video description.
 # Examples: [500, 1000, 1500]
 # Default: 500
-media-description-max-chars: 500
+media-description-max-chars: 1500
 
 # Int. Number of days to cache media from remote instances before they are removed from the cache.
 # A job will run every day at midnight to clean up any remote media older than the given amount of days.
@@ -447,7 +389,7 @@ media-description-max-chars: 500
 #
 # If this is set to 0, then media from remote instances will be cached indefinitely.
 # Examples: [30, 60, 7, 0]
-# Default: 30
+# Default: 7
 media-remote-cache-days: 5
 
 # Int. Max size in bytes of emojis uploaded to this instance via the admin API.
@@ -463,7 +405,7 @@ media-emoji-local-max-size: 51200
 # This strikes a good balance between decent interoperability with instances that have
 # higher emoji size limits, and not taking up too much space in storage.
 # Examples: [51200, 102400]
-# Default: 51200
+# Default: 102400
 media-emoji-remote-max-size: 102400
 
 ##########################
@@ -488,7 +430,7 @@ storage-local-base-path: "/gotosocial/storage"
 # String. API endpoint of the S3 compatible service.
 # Only required when running with the s3 storage backend.
 # Examples: ["minio:9000", "s3.nl-ams.scw.cloud", "s3.us-west-002.backblazeb2.com"]
-# GoToSocial uses "DNS-style" when accessing buckets. 
+# GoToSocial uses "DNS-style" when accessing buckets.
 # If you are using Scaleways object storage, please remove the "bucket name" from the endpoint address
 # Default: ""
 storage-s3-endpoint: ""
@@ -575,10 +517,10 @@ statuses-media-max-files: 6
 
 # Bool. Whether or not letsencrypt should be enabled for the server.
 # If false, the rest of the settings here will be ignored.
-# You should only change this if you want to serve GoToSocial behind a reverse proxy
-# like Traefik, HAProxy, or Nginx.
+# If you serve GoToSocial behind a reverse proxy like nginx or traefik, leave this turned off.
+# If you don't, then turn it on so that you can use https.
 # Options: [true, false]
-# Default: true
+# Default: false
 letsencrypt-enabled: false
 
 # Int. Port to listen for letsencrypt certificate challenges on.
@@ -608,7 +550,7 @@ letsencrypt-email-address: ""
 ##### MANUAL TLS CONFIG  #####
 ##############################
 
-# String. Path to a PEM-encoded file on disk that includes the certificate chain 
+# String. Path to a PEM-encoded file on disk that includes the certificate chain
 # and the public key
 # Examples: ["/gotosocial/storage/certs/chain.pem"]
 # Default: ""
@@ -681,6 +623,11 @@ oidc-scopes:
 # Default: false
 oidc-link-existing: false
 
+# Array of string. If the returned ID token contains a 'groups' claim that matches one of the
+# groups in oidc-admin-groups, then this user will be granted admin rights on the GtS instance
+# Default: []
+oidc-admin-groups: ["admin"]
+
 #######################
 ##### SMTP CONFIG #####
 #######################
@@ -746,7 +693,7 @@ syslog-enabled: false
 
 # String. Protocol to use when directing logs to syslog. Leave empty to connect to local syslog.
 # Options: ["udp", "tcp", ""]
-# Default: "tcp"
+# Default: "udp"
 syslog-protocol: "udp"
 
 # String. Address:port to send syslog logs to. Leave empty to connect to local syslog.
@@ -761,6 +708,91 @@ syslog-address: "localhost:514"
 # loadbalancer or proxy.
 # Default: "X-Request-Id"
 request-id-header: "X-Request-Id"
+
+# Bool. Enable OpenTelemetry based tracing support.
+# Default: false
+tracing-enabled: false
+
+# String. Set the transport protocol for the tracing system. Can either be "grpc" for
+# OTLP gRPC or "jaeger" for jaeger based ingesters.
+# Options: ["grpc", "jaeger"]
+# Default: "grpc"
+tracing-transport: "grpc"
+
+# String. Endpoint of the trace ingester. When using the gRPC based transport, the
+# endpoint is usually a single address/port combination. For the jaeger transport it
+# should be a fully qualified URL.
+# OTLP gRPC or "jaeger" for jaeger based ingesters
+# Examples: ["localhost:4317", "http://localhost:14268/api/traces"]
+# Default: ""
+tracing-endpoint: ""
+
+# Bool. Disable HTTPS for the gRPC transport protocol.
+# Default: false
+tracing-insecure-transport: false
+
+################################
+##### HTTP CLIENT SETTINGS #####
+################################
+
+# Settings for OUTGOING http client connections used by GoToSocial to make
+# requests to remote resources (status GETs, media GETs, inbox POSTs, etc).
+
+http-client:
+
+  # Duration. Timeout to use for outgoing HTTP requests. If the timeout
+  # is exceeded, the connection to the remote server will be dropped.
+  # A value of 0s indicates no timeout: this is not advised!
+  # Examples: ["5s", "10s", "0s"]
+  # Default: "10s"
+  timeout: "10s"
+
+  ########################################
+  #### RESERVED IP RANGE EXCEPTIONS ######
+  ########################################
+  #
+  # Explicitly allow or block outgoing dialing within the provided IPv4/v6 CIDR ranges.
+  #
+  # By default, as a basic security precaution, GoToSocial blocks outgoing dialing within most "special-purpose"
+  # IP ranges. However, it may be desirable for admins with more exotic setups (proxies, funky NAT, etc) to
+  # explicitly override one or more of these otherwise blocked ranges.
+  #
+  # Each of the below allow/block config options accepts an array of IPv4 and/or IPv6 CIDR strings.
+  # For example, to override the hardcoded block of IPv4 and IPv6 dialing to localhost, set:
+  #
+  #   allow-ips: ["127.0.0.1/32", "::1/128"].
+  #
+  # You can also use YAML multi-line arrays to define these, but be diligent with indentation.
+  #
+  # When dialing, GoToSocial will first check if the destination falls within explicitly allowed IP ranges,
+  # then explicitly blocked IP ranges, then the default (hardcoded) blocked IP ranges, returning OK on the
+  # first allowed match, not OK on the first blocked match, or just defaulting to OK if nothing is matched.
+  #
+  # As with all security settings, it is better to start too restrictive and then ease off depending on
+  # your use case, than to start too permissive and try to close the stable door after the horse has
+  # already bolted. With this in mind:
+  # - Don't touch these settings unless you have a good reason to, and only if you know what you're doing.
+  # - When adding explicitly allowed exceptions, use the narrowest possible CIDR for your use case.
+  #
+  # For reserved / special ranges, see:
+  # - https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
+  # - https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
+  #
+  # Both allow-ips and block-ips default to an empty array.
+  allow-ips: []
+  block-ips: []
+
+  # Bool. Disable verification of TLS certificates of remote servers.
+  # With this set to 'true', GoToSocial will not error when a remote
+  # server presents an invalid or self-signed certificate.
+  #
+  # THIS SETTING SHOULD BE USED FOR TESTING ONLY! IF YOU TURN THIS
+  # ON WHILE RUNNING IN PRODUCTION YOU ARE LEAVING YOUR SERVER WIDE
+  # OPEN TO MAN IN THE MIDDLE ATTACKS! DO NOT CHANGE THIS SETTING 
+  # UNLESS YOU KNOW EXACTLY WHAT YOU'RE DOING AND WHY YOU'RE DOING IT.
+  #
+  # Default: false
+  tls-insecure-skip-verify: false
 
 #############################
 ##### ADVANCED SETTINGS #####
@@ -837,5 +869,37 @@ advanced-throttling-multiplier: 8
 # Minimum resolution is 1 second.
 #
 # Examples: [30s, 10s, 5s, 1m]
-# Default: 30s
+# Default: "30s"
 advanced-throttling-retry-after: "5s"
+
+# Int. CPU multiplier for the amount of goroutines to spawn in order to send messages via ActivityPub.
+# Messages will be batched so that at most multiplier * CPU count messages will be sent out at once.
+# This can be tuned to limit concurrent POSTing to remote inboxes, preventing your instance CPU
+# usage from skyrocketing when an account with many followers posts a new status.
+#
+# Messages are split among available senders, and each sender processes its assigned messages in serial.
+# For example, say a user with 1000 followers is on an instance with 2 CPUs. With the default multiplier
+# of 2, this means 4 senders would be in process at once on this instance. When the user creates a new post,
+# each sender would end up iterating through about 250 Create messages + delivering them to remote instances.
+#
+# If you set this to 0 or less, only 1 sender will be used regardless of CPU count. This may be
+# useful in cases where you are working with very tight network or CPU constraints.
+#
+# Example values for multiplier 2 (default):
+#
+# 1 cpu = 2 concurrent senders
+# 2 cpu = 4 concurrent senders
+# 4 cpu = 8 concurrent senders
+#
+# Example values for multiplier 4:
+#
+# 1 cpu = 4 concurrent senders
+# 2 cpu = 8 concurrent senders
+# 4 cpu = 16 concurrent senders
+#
+# Example values for multiplier <1:
+#
+# 1 cpu = 1 concurrent sender
+# 2 cpu = 1 concurrent sender
+# 4 cpu = 1 concurrent sender
+advanced-sender-multiplier: 6

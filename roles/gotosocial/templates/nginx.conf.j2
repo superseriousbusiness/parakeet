@@ -9,6 +9,10 @@ http {
             rewrite ^.*$ https://{{ gotosocial_hostname }}/.well-known/webfinger permanent;
         }
 
+        location /.well-known/host-meta {
+            rewrite ^.*$ https://{{ gotosocial_hostname }}/.well-known/host-meta permanent;
+        }
+
         location /.well-known/nodeinfo {
             rewrite ^.*$ https://{{ gotosocial_hostname }}/.well-known/nodeinfo permanent;
         }
