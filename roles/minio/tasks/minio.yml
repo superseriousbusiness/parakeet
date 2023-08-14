@@ -1,12 +1,5 @@
 ---
 
-- name: "create minio dir"
-  file:
-    path: "{{ gotosocial_dir }}"
-    state: directory
-    owner: "{{ default_user }}"
-    group: "{{ default_group }}"
-
 - name: "template minio config"
   template:
     src: "minio.env"
@@ -21,8 +14,10 @@
     image: "minio/minio:{{ app_versions.minio }}"
     pull: true
     log_driver: "local"
+    command: ["server", "--console-address", ":9001"]
     env:
-      MINIO_VOLUMES: "/minio/storage"
+      MINIO_HOSTNAME: "{{ minio_hostname }}"
+      MINIO_VOLUMES: "{{ minio_volumes }}"
       MINIO_CONFIG_ENV_FILE: "{{ minio_config_file_dest }}"
     networks:
       - name: "{{ docker_network_names.minio }}"
@@ -31,13 +26,24 @@
     restart_policy: "always"
     user: "{{ user_group.minio.uid }}:{{ user_group.minio.gid }}"
     volumes:
-      - "{{ docker_volumes.minio }}:/minio/storage"
+      - "{{ docker_volumes.minio }}:{{ minio_volumes }}"
     networks_cli_compatible: no
     container_default_behavior: compatibility
     labels:
       traefik.enable: "true"
-      traefik.http.services.minio.loadbalancer.server.port: "9000"
-      traefik.http.routers.minio_https.rule: "Host(`{{ minio_hostname }}`)"
-      traefik.http.routers.minio_https.tls: "true"
-      traefik.http.routers.minio_https.tls.certresolver: "le"
-      traefik.http.routers.minio_https.entrypoints: "websecure"
+      
+      # CONSOLE
+      traefik.http.services.minio_console.loadbalancer.server.port: "9001"
+      traefik.http.routers.minio_console_https.rule: "Host(`{{ minio_console_hostname }}`)"
+      traefik.http.routers.minio_console_https.tls: "true"
+      traefik.http.routers.minio_console_https.tls.certresolver: "le"
+      traefik.http.routers.minio_console_https.entrypoints: "websecure"
+      traefik.http.routers.minio_console_https.service: "minio_console"
+
+      # API
+      traefik.http.services.minio_api.loadbalancer.server.port: "9000"
+      traefik.http.routers.minio_api_https.rule: "Host(`{{ minio_hostname }}`)"
+      traefik.http.routers.minio_api_https.tls: "true"
+      traefik.http.routers.minio_api_https.tls.certresolver: "le"
+      traefik.http.routers.minio_api_https.entrypoints: "websecure"
+      traefik.http.routers.minio_api_https.service: "minio_api"

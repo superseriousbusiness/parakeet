@@ -10,5 +10,6 @@ dex_clients:
   gotosocial: "gotosocial_client"
   peertube: "peertube_client"
   synapse: "synapse_client"
+  minio: "minio_client"
 
 dex_ca_crt_path: "/ca.crt"
