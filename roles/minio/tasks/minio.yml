@@ -1,0 +1,43 @@
+---
+
+- name: "create minio dir"
+  file:
+    path: "{{ gotosocial_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template minio config"
+  template:
+    src: "minio.env"
+    dest: "{{ minio_config_file }}"
+    owner: "{{ user_group.minio.uid }}"
+    group: "{{ user_group.minio.gid }}"
+    mode: "600"
+
+- name: "deploy minio"
+  docker_container:
+    name: "minio"
+    image: "minio/minio:{{ app_versions.minio }}"
+    pull: true
+    log_driver: "local"
+    env:
+      MINIO_VOLUMES: "/minio/storage"
+      MINIO_CONFIG_ENV_FILE: "{{ minio_config_file_dest }}"
+    networks:
+      - name: "{{ docker_network_names.minio }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    user: "{{ user_group.minio.uid }}:{{ user_group.minio.gid }}"
+    volumes:
+      - "{{ docker_volumes.minio }}:/minio/storage"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.minio.loadbalancer.server.port: "9000"
+      traefik.http.routers.minio_https.rule: "Host(`{{ minio_hostname }}`)"
+      traefik.http.routers.minio_https.tls: "true"
+      traefik.http.routers.minio_https.tls.certresolver: "le"
+      traefik.http.routers.minio_https.entrypoints: "websecure"

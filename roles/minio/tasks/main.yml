@@ -1,0 +1,4 @@
+---
+
+- name: "minio"
+  import_tasks: minio.yml

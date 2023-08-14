@@ -1,0 +1,11 @@
+---
+
+- name: "set up minio"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | minio"
+      include_role:
+        name: minio

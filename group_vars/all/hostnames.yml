@@ -16,6 +16,9 @@ gotosocial_hostname: "gts.{{ domain }}"
 element_hostname: "chat.{{ domain }}"
 synapse_hostname: "matrix.{{ domain }}"
 
+####### MINIO ########
+minio_hostname: "s3.{{ domain }}"
+
 ####### PEERTUBE #######
 peertube_hostname: "tube.{{ domain }}"
 
