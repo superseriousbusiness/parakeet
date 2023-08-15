@@ -10,6 +10,9 @@ user_group:
     gotosocial:
       uid: "1000"
       gid: "1000"
+    minio:
+      uid: "1002"
+      gid: "1002"
     nginx:
       uid: "101"
       gid: "101"

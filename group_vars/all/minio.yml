@@ -1,0 +1,7 @@
+---
+
+minio_dir: "/var/lib/docker/volumes/{{ docker_volumes.minio }}/_data"
+minio_config_file: "{{ minio_dir }}/minio.env"
+
+minio_volumes: "/minio/storage"
+minio_config_file_dest: "{{ minio_volumes }}/minio.env"

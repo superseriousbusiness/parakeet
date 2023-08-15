@@ -8,6 +8,7 @@ docker_network_names:
     peertube: "peertube"
     synapse: "synapse"
     owncast: "owncast"
+    minio: "minio"
 
 docker_ipam_configs:
     debug:
@@ -31,6 +32,9 @@ docker_ipam_configs:
     owncast:
       subnet: "172.24.0.0/16"
       gateway: "172.24.0.1"
+    minio:
+      subnet: "172.25.0.0/16"
+      gateway: "172.25.0.1"
 
 docker_volumes:
     drone: "drone"
@@ -48,3 +52,4 @@ docker_volumes:
     # owncastdata: "owncastdata"
     mjolnir: "mjolnir"
     pantalaimon: "pantalaimon"
+    minio: "minio"

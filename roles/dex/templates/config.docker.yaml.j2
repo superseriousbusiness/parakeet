@@ -95,6 +95,12 @@ staticClients:
     name: 'Synapse'
     secret: '{{ dex_client_secrets.synapse }}'
 
+  - id: {{ dex_clients.minio }}
+    redirectURIs:
+      - 'https://{{ minio_console_hostname }}/oauth_callback'
+    name: 'Minio'
+    secret: '{{ dex_client_secrets.minio }}'
+
 # Connectors are used to authenticate users agains upstream identity providers.
 #
 # See the documentation (https://dexidp.io/docs/connectors/) for further information.
