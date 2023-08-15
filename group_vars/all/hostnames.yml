@@ -18,7 +18,7 @@ synapse_hostname: "matrix.{{ domain }}"
 
 ####### MINIO ########
 minio_hostname: "s3.{{ domain }}"
-minio_console_hostname: "console.{{ minio_hostname }}"
+minio_console_hostname: "minio.{{ minio_hostname }}"
 
 ####### PEERTUBE #######
 peertube_hostname: "tube.{{ domain }}"
