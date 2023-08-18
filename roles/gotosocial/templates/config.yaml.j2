@@ -417,7 +417,7 @@ media-emoji-remote-max-size: 102400
 # String. Type of storage backend to use.
 # Examples: ["local", "s3"]
 # Default: "local" (storage on local disk)
-storage-backend: "local"
+storage-backend: "s3"
 
 # String. Directory to use as a base path for storing files.
 # Make sure whatever user/group gotosocial is running as has permission to access
@@ -433,7 +433,7 @@ storage-local-base-path: "/gotosocial/storage"
 # GoToSocial uses "DNS-style" when accessing buckets.
 # If you are using Scaleways object storage, please remove the "bucket name" from the endpoint address
 # Default: ""
-storage-s3-endpoint: ""
+storage-s3-endpoint: "{{ minio_hostname }}"
 
 # Bool. If data stored in S3 should be proxied through GoToSocial instead of redirecting to a presigned URL.
 #
@@ -452,14 +452,14 @@ storage-s3-use-ssl: true
 # Only required when running with the s3 storage backend.
 # Examples: ["AKIAJSIE27KKMHXI3BJQ","miniouser"]
 # Default: ""
-storage-s3-access-key: ""
+storage-s3-access-key: "{{ gotosocial_s3_access_key_id }}"
 
 # String. Secret key part of the S3 credentials.
 # Consider setting this value using environment variables to avoid leaking it via the config file
 # Only required when running with the s3 storage backend.
 # Examples: ["5bEYu26084qjSFyclM/f2pz4gviSfoOg+mFwBH39","miniopassword"]
 # Default: ""
-storage-s3-secret-key: ""
+storage-s3-secret-key: "{{ gotosocial_s3_secret_access_key }}"
 
 # String. Name of the storage bucket.
 #
@@ -471,7 +471,7 @@ storage-s3-secret-key: ""
 # Only required when running with the s3 storage backend.
 # Examples: ["gts","cool-instance"]
 # Default: ""
-storage-s3-bucket: ""
+storage-s3-bucket: "gts-superseriousbusiness-org"
 
 ###########################
 ##### STATUSES CONFIG #####
