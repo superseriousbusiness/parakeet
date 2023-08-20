@@ -47,6 +47,7 @@
     log_driver: "local"
     env:
       GTS_CONFIG_PATH: "/gotosocial/config.yaml"
+      TZ: "Europe/Brussels"
     networks:
       - name: "{{ docker_network_names.gotosocial }}"
     purge_networks: yes
