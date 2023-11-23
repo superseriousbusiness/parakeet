@@ -1,0 +1,22 @@
+scrape_configs:
+- job_name: "gotosocial"
+  scrape_interval: "15s"
+  metrics_path: "/metrics"
+  scheme: "https"
+  basic_auth:
+    username: "{{ gotosocial_prom_username }}"
+    password: "{{ gotosocial_prom_password }}"
+  static_configs:
+    - targets: ["gts.superseriousbusiness.org"]
+- job_name: "goblin"
+  scrape_interval: "15s"
+  metrics_path: "/metrics"
+  scheme: "https"
+  basic_auth:
+    username: "{{ goblin_tech_prom_user }}"
+    password: "{{ goblin_tech_prom_password }}"
+  static_configs:
+    - targets: ["goblin.technology"]
+- job_name: prometheus
+  static_configs:
+    - targets: ["localhost:9090"]

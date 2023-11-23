@@ -1,0 +1,21 @@
+[server]
+http_addr = 0.0.0.0
+root_url = https://{{ grafana_hostname }}
+enable_gzip = true
+
+[security]
+admin_user = {{ grafana_admin_user }}
+admin_password = {{ grafana_admin_password }}
+admin_email = {{ admin_email_address }}
+cookie_secure = true
+strict_transport_security = true
+data_source_proxy_whitelist = {{ container_addresses.prometheus }}:9090
+
+[smtp]
+enabled = true
+host = {{ smtp_host }}:{{ smtp_port }}
+user = {{ smtp_username }}
+password = {{ smtp_password }}
+from_address = {{ admin_email_address }}
+from_name = "GtS Grafana"
+startTLS_policy = OpportunisticStartTLS

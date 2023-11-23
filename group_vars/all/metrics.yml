@@ -1,0 +1,6 @@
+---
+
+prometheus_dir: "{{ top_level_dir }}/prometheus"
+prometheus_config_file: "{{ prometheus_dir }}/prometheus.yml"
+grafana_dir: "{{ top_level_dir }}/grafana"
+grafana_config_file: "{{ grafana_dir }}/grafana.ini"

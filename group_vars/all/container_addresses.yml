@@ -5,3 +5,4 @@ container_addresses:
   postgres: postgres
   redis: redis
   pantalaimon: pantalaimon
+  prometheus: prometheus

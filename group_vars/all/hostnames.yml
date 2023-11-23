@@ -16,6 +16,9 @@ gotosocial_hostname: "gts.{{ domain }}"
 element_hostname: "chat.{{ domain }}"
 synapse_hostname: "matrix.{{ domain }}"
 
+####### METRICS ########
+grafana_hostname: "grafana.{{ domain }}"
+
 ####### MINIO ########
 minio_hostname: "s3.{{ domain }}"
 minio_console_hostname: "minio.{{ minio_hostname }}"

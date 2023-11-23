@@ -7,30 +7,6 @@
     owner: "{{ default_user }}"
     group: "{{ default_group }}"
 
-- name: "create gotosocial fonts"
-  file:
-    path: "{{ gotosocial_fonts_dir }}"
-    state: directory
-    owner: "{{ default_user }}"
-    group: "{{ default_group }}"
-
-- name: "copy gotosocial fonts"
-  copy:
-    src: "{{ item }}"
-    dest: "{{ gotosocial_fonts_dir }}/{{ item }}"
-    owner: "{{ user_group.gotosocial.uid }}"
-    group: "{{ user_group.gotosocial.gid }}"
-    mode: "600"
-  loop:
-    - "Atkinson-Hyperlegible-Bold-102.ttf"
-    - "Atkinson-Hyperlegible-Regular-102.ttf"
-    - "noto-sans-v27-latin-700.woff"
-    - "noto-sans-v27-latin-700.woff2"
-    - "noto-sans-v27-latin-regular.woff"
-    - "noto-sans-v27-latin-regular.woff2"
-    - "OFL.txt"
-    - "Windows-Regular.ttf"
-
 - name: "template gotosocial config"
   template:
     src: "config.yaml.j2"
@@ -56,7 +32,6 @@
     user: "{{ user_group.gotosocial.uid }}:{{ user_group.gotosocial.gid }}"
     volumes:
       - "{{ docker_volumes.gotosocial }}:/gotosocial/storage"
-      - "{{ gotosocial_fonts_dir }}:/gotosocial/web/assets/fonts"
       - "{{ gotosocial_config_file }}:/gotosocial/config.yaml"
       - "{{ ca_crt_path }}:{{ gotosocial_ca_cert_path }}"
     networks_cli_compatible: no

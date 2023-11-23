@@ -1,0 +1,11 @@
+---
+
+- name: "set up metrics"
+  hosts: all
+  become: true
+  roles:
+    - common
+  tasks:
+    - name: "task | metrics"
+      include_role:
+        name: metrics

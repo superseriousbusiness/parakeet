@@ -49,6 +49,12 @@ user_group:
     pantalaimon:
       uid: "991"
       gid: "991"
+    prometheus:
+      uid: "9090"
+      gid: "9090"
+    grafana:
+      uid: "472"
+      gid: "472"
     traefikconfig:
       uid: "0"
       gid: "0"

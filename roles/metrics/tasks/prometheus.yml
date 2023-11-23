@@ -1,0 +1,34 @@
+---
+
+- name: "create prometheus dir"
+  file:
+    path: "{{ prometheus_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template prometheus config"
+  template:
+    src: "prometheus.yml.j2"
+    dest: "{{ prometheus_config_file }}"
+    owner: "{{ user_group.prometheus.uid }}"
+    group: "{{ user_group.prometheus.gid }}"
+    mode: "600"
+
+- name: "deploy prometheus"
+  docker_container:
+    name: "prometheus"
+    image: "prom/prometheus:{{ app_versions.prometheus }}"
+    pull: true
+    log_driver: "local"
+    networks:
+      - name: "{{ docker_network_names.metrics }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    user: "{{ user_group.prometheus.uid }}:{{ user_group.prometheus.gid }}"
+    volumes:
+      - "{{ docker_volumes.prometheus }}:/prometheus"
+      - "{{ prometheus_config_file }}:/etc/prometheus/prometheus.yml"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility

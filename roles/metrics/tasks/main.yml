@@ -1,0 +1,7 @@
+---
+
+- name: "prometheus"
+  import_tasks: prometheus.yml
+
+- name: "grafana"
+  import_tasks: grafana.yml

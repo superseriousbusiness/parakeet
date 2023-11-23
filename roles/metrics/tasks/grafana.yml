@@ -1,0 +1,41 @@
+---
+
+- name: "create grafana dir"
+  file:
+    path: "{{ grafana_dir }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_group }}"
+
+- name: "template grafana config"
+  template:
+    src: "grafana.ini.j2"
+    dest: "{{ grafana_config_file }}"
+    owner: "{{ user_group.grafana.uid }}"
+    group: "{{ user_group.grafana.gid }}"
+    mode: "600"
+
+- name: "deploy grafana"
+  docker_container:
+    name: "grafana"
+    image: "grafana/grafana-oss:{{ app_versions.grafana }}"
+    pull: true
+    log_driver: "local"
+    networks:
+      - name: "{{ docker_network_names.metrics }}"
+    purge_networks: yes
+    detach: true
+    restart_policy: "always"
+    user: "{{ user_group.grafana.uid }}:{{ user_group.grafana.gid }}"
+    volumes:
+      - "{{ docker_volumes.grafana }}:/var/lib/grafana"
+      - "{{ grafana_config_file }}:/etc/grafana/grafana.ini"
+    networks_cli_compatible: no
+    container_default_behavior: compatibility
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
+      traefik.http.routers.grafana_https.rule: "Host(`{{ grafana_hostname }}`)"
+      traefik.http.routers.grafana_https.tls: "true"
+      traefik.http.routers.grafana_https.tls.certresolver: "le"
+      traefik.http.routers.grafana_https.entrypoints: "websecure"

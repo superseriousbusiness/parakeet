@@ -5,7 +5,7 @@ app_versions:
     drone: "2.15.0"
     drone_runner: "1.8.2"
     element: "v1.11.30"
-    gotosocial: "0.11.0"
+    gotosocial: "snapshot"
     minio: "RELEASE.2023-08-09T23-30-22Z"
     nginx: "1.20.1-alpine"
     openldap: "1.5.0"
@@ -16,5 +16,7 @@ app_versions:
     synapse: "v1.70.1"
     mjolnir: "v1.5.0"
     pantalaimon: "0.10.5"
+    prometheus: "v2.48.0"
+    grafana: "10.2.2"
     traefik: "v2.9.4"
     owncast: latest

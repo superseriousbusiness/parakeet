@@ -35,6 +35,17 @@ log-db-queries: false
 # Default: true
 log-client-ip: true
 
+# String. Format to use for the timestamp in log lines.
+# If set to the empty string, the timestamp will be
+# ommitted from the logs entirely.
+#
+# The format must be compatible with Go's time.Layout, as
+# documented on https://pkg.go.dev/time#pkg-constants.
+#
+# Examples: [true, false]
+# Default: "02/01/2006 15:04:05.000"
+log-timestamp-format: "02/01/2006 15:04:05.000"
+
 # String. Application name to use internally.
 # Examples: ["My Application","gotosocial"]
 # Default: "gotosocial"
@@ -70,7 +81,7 @@ host: "{{ gotosocial_hostname }}"
 # DO NOT change this after your server has already run once, or you will break things!
 #
 # Please read the appropriate section of the installation guide before you go messing around with this setting:
-# https://docs.gotosocial.org/installation_guide/advanced/#can-i-host-my-instance-at-fediexampleorg-but-have-just-exampleorg-in-my-username
+# https://docs.gotosocial.org/en/latest/advanced/host-account-domain/
 #
 # Examples: ["example.org","server.com"]
 # Default: ""
@@ -218,6 +229,12 @@ db-sqlite-synchronous: "NORMAL"
 # SQLite only -- unused otherwise.
 # If set to empty string or zero, the sqlite default (2MiB) will be used.
 # See: https://www.sqlite.org/pragma.html#pragma_cache_size
+#
+# More is not necessarily better for caches. They need to be tuned to the
+# workload. The defaults should be plenty for most instances and you shouldn't
+# change it. If you do change it, ensure you mention this when requesting help
+# in the GoToSocial Help channel.
+#
 # Examples: ["0", "2MiB", "8MiB", "64MiB"]
 # Default: "8MiB"
 db-sqlite-cache-size: "8MiB"
@@ -236,8 +253,8 @@ cache:
   # within. This is based on estimated sizes of
   # in-memory objects, and so NOT AT ALL EXACT.
   # Examples: ["100MiB", "200MiB", "500MiB", "1GiB"]
-  # Default: "200MiB"
-  memory-target: "1GiB"
+  # Default: "100MiB"
+  memory-target: "100MiB"
 
 ######################
 ##### WEB CONFIG #####
@@ -260,6 +277,36 @@ web-asset-base-dir: "./web/assets/"
 ###########################
 
 # Config pertaining to instance federation settings, pages to hide/expose, etc.
+
+# Array of string. BCP47 language tags to indicate preferred languages of users on this instance.
+#
+# If you provide these, you should provide these in order from most-preferred to least-preferred,
+# but note that leaving out a language from this array doesn't mean it can't be used on this instance,
+# it only means it won't be advertised as a preferred instance language.
+#
+# It is valid to provide no entries here; your instance will then have no particular preferred language.
+#
+# See here for commonly-used tags: https://en.wikipedia.org/wiki/IETF_language_tag#List_of_common_primary_language_subtags
+# See here for all current tags: https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+#
+# Example: ["nl", "en-gb", "fr"]
+# Default: []
+instance-languages: ["en"]
+
+# String. Federation mode to use for this instance.
+#
+# "blocklist" -- open federation by default. Only instances that are explicitly 
+#                blocked will be denied (unless they are also explicitly allowed).
+#
+# "allowlist" -- closed federation by default. Only instances that are explicitly
+#                allowed will be able to interact with this instance.
+#
+# For more details on blocklist and allowlist modes, check the documentation at:
+# https://docs.gotosocial.org/en/latest/admin/federation_modes
+#
+# Options: ["blocklist", "allowlist"]
+# Default: "blocklist"
+instance-federation-mode: "blocklist"
 
 # Bool. Allow unauthenticated users to make queries to /api/v1/instance/peers?filter=open in order
 # to see a list of instances that this instance 'peers' with. Even if set to 'false', then authenticated
@@ -320,7 +367,7 @@ instance-inject-mastodon-version: false
 # Bool. Do we want people to be able to just submit sign up requests, or do we want invite only?
 # Options: [true, false]
 # Default: true
-accounts-registration-open: false
+accounts-registration-open: true
 
 # Bool. Do sign up requests require approval from an admin/moderator before an account can sign in/use the server?
 # Options: [true, false]
@@ -379,18 +426,7 @@ media-description-min-chars: 0
 # Int. Maximum amount of characters permitted in an image or video description.
 # Examples: [500, 1000, 1500]
 # Default: 500
-media-description-max-chars: 1500
-
-# Int. Number of days to cache media from remote instances before they are removed from the cache.
-# A job will run every day at midnight to clean up any remote media older than the given amount of days.
-#
-# When remote media is removed from the cache, it is deleted from storage but the database entries for the media
-# are kept so that it can be fetched again if requested by a user.
-#
-# If this is set to 0, then media from remote instances will be cached indefinitely.
-# Examples: [30, 60, 7, 0]
-# Default: 7
-media-remote-cache-days: 5
+media-description-max-chars: 500
 
 # Int. Max size in bytes of emojis uploaded to this instance via the admin API.
 # The default is the same as the Mastodon size limit for emojis (50kb), which allows
@@ -407,6 +443,37 @@ media-emoji-local-max-size: 51200
 # Examples: [51200, 102400]
 # Default: 102400
 media-emoji-remote-max-size: 102400
+
+# The below media cleanup settings allow admins to customize when and
+# how often media cleanup + prune jobs run, while being set to a fairly
+# sensible default (every night @ midnight). For more information on exactly
+# what these settings do, with some customization examples, see the docs:
+# https://docs.gotosocial.org/en/latest/admin/media_caching#cleanup
+
+# Int. Number of days to cache media from remote instances before
+# they are removed from the cache. When remote media is removed from
+# the cache, it is deleted from storage but the database entries for
+# the media are kept so that it can be fetched again if requested by a user.
+#
+# If this is set to 0, then media from remote instances will be cached indefinitely.
+#
+# Examples: [30, 60, 7, 0]
+# Default: 7
+media-remote-cache-days: 5
+
+# String. 24hr time of day formatted as hh:mm.
+# Examples: ["14:30", "00:00", "04:00"]
+# Default: "00:00" (midnight). 
+media-cleanup-from: "00:00"
+
+# Duration. Period between media cleanup runs.
+# More than once per 24h is not recommended
+# is likely overkill. Setting this to something
+# very low like once every 10 minutes will probably
+# cause lag and possibly other issues.
+# Examples: ["24h", "72h", "12h"]
+# Default: "24h" (once per day).
+media-cleanup-every: "24h"
 
 ##########################
 ##### STORAGE CONFIG #####
@@ -713,23 +780,37 @@ request-id-header: "X-Request-Id"
 # Default: false
 tracing-enabled: false
 
-# String. Set the transport protocol for the tracing system. Can either be "grpc" for
-# OTLP gRPC or "jaeger" for jaeger based ingesters.
-# Options: ["grpc", "jaeger"]
+# String. Set the transport protocol for the tracing system. Can either be "grpc"
+# for OTLP gRPC, or "http" for OTLP HTTP.
+# Options: ["grpc", "http"]
 # Default: "grpc"
 tracing-transport: "grpc"
 
-# String. Endpoint of the trace ingester. When using the gRPC based transport, the
-# endpoint is usually a single address/port combination. For the jaeger transport it
-# should be a fully qualified URL.
-# OTLP gRPC or "jaeger" for jaeger based ingesters
-# Examples: ["localhost:4317", "http://localhost:14268/api/traces"]
+# String. Endpoint of the trace ingester. When using the gRPC or HTTP based transports,
+# provide the endpoint as a single address/port combination without a protocol scheme.
+# Examples: ["localhost:4317"]
 # Default: ""
 tracing-endpoint: ""
 
-# Bool. Disable HTTPS for the gRPC transport protocol.
+# Bool. Disable TLS for the gRPC and HTTP transport protocols.
 # Default: false
 tracing-insecure-transport: false
+
+# Bool. Enable OpenTelemetry based metrics support.
+# Default: false
+metrics-enabled: true
+
+# Bool. Enable HTTP Basic Authentication for Prometheus metrics endpoint.
+# Default: false
+metrics-auth-enabled: true
+
+# String. Username for Prometheus metrics endpoint.
+# Default: ""
+metrics-auth-username: "{{ gotosocial_prom_username }}"
+
+# String. Password for Prometheus metrics endpoint.
+# Default: ""
+metrics-auth-password: "{{ gotosocial_prom_password }}"
 
 ################################
 ##### HTTP CLIENT SETTINGS #####
@@ -903,3 +984,21 @@ advanced-throttling-retry-after: "5s"
 # 2 cpu = 1 concurrent sender
 # 4 cpu = 1 concurrent sender
 advanced-sender-multiplier: 6
+
+# Array of string. Extra URIs to add to 'img-src' and 'media-src'
+# when building the Content-Security-Policy header for your instance.
+#
+# This can be used to allow the browser to load resources from additional
+# sources like S3 buckets and so on when viewing your instance's pages
+# and profiles in the browser.
+#
+# Since non-proxying S3 storage will be probed on instance launch to
+# generate a correct Content-Security-Policy, you probably won't need
+# to ever touch this setting, but it's included in the 'spirit of more
+# configurable (usually) means more good'.
+# 
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+#
+# Example: ["s3.example.org", "some-bucket-name.s3.example.org"]
+# Default: []
+advanced-csp-extra-uris: []
